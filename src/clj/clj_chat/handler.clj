@@ -2,7 +2,8 @@
   (:require [compojure.core :refer [GET defroutes]]
             [compojure.route :refer [resources]]
             [ring.util.response :refer [resource-response]]
-            [ring.middleware.reload :refer [wrap-reload]]))
+            [ring.middleware.reload :refer [wrap-reload]]
+            [taoensso.sente :as sente]))
 
 (defroutes routes
   (GET "/" [] (resource-response "index.html" {:root "public"}))

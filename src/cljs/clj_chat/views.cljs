@@ -4,4 +4,9 @@
 (defn main-panel []
   (let [name (re-frame/subscribe [:name])]
     (fn []
-      [:div "Hello from " @name])))
+      [:div {:class "main"}
+       [:div {:class "rooms"}]
+       [:div {:class "room"}
+        [:div {:class "room-edge"}]
+        [:div {:class "chat"}]
+        [:div {:class "room-edge"}]]])))
