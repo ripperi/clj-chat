@@ -3,7 +3,8 @@
             [compojure.route :refer [resources]]
             [ring.util.response :refer [resource-response]]
             [ring.middleware.reload :refer [wrap-reload]]
-            [taoensso.sente :as sente]))
+            [taoensso.sente :as sente]
+            [datomic.api :as d]))
 
 (defroutes routes
   (GET "/" [] (resource-response "index.html" {:root "public"}))
@@ -12,3 +13,4 @@
 (def dev-handler (-> #'routes wrap-reload))
 
 (def handler routes)
+

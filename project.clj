@@ -6,7 +6,8 @@
                  [compojure "1.5.0"]
                  [yogthos/config "0.8"]
                  [ring "1.4.0"]
-                 [com.taoensso/sente "1.11.0"]]
+                 [com.taoensso/sente "1.11.0"]
+                 [com.datomic/datomic-free "0.9.5554"]]
 
   :plugins [[lein-cljsbuild "1.1.4"]]
 
