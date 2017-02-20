@@ -3,7 +3,7 @@
             [reagent.core :refer [atom]]))
 
 (defn message-view [message]
-  [:li {:class "message"} message])
+  [:li {:class "message" :key (:time message)} (:value message)])
 
 (defn messages-view []
   (let [messages (re-frame/subscribe [:messages])]
@@ -16,6 +16,7 @@
         change-handler (fn [e] (reset! value (-> e .-target .-value)))
         submit-handler (fn [e] (do
                                  (.preventDefault e)
+                                 (re-frame/dispatch [:send-message {:time (str (.getTime (js/Date.))) :value @value}])
                                  (reset! value "")))]
     (fn []
       [:div {:class "content flex-col"}
