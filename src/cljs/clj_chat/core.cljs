@@ -4,7 +4,8 @@
               [clj-chat.events]
               [clj-chat.subs]
               [clj-chat.views :as views]
-              [clj-chat.config :as config]))
+              [clj-chat.config :as config]
+              [clj-chat.socket :as socket]))
 
 
 (defn dev-setup []
