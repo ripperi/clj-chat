@@ -38,9 +38,16 @@
 
 (defmethod -event-msg-handler
   :default
-  [{:as msg :keys [id ?data event]}]
+  [{:keys [id ?data]}]
   (println "SERVER DEFAULT HANDLER")
-  (println "-id:" id "-data:" ?data "-event:" event))
+  (println "-id:" id "-data:" ?data)
+  (chsk-send! :sente/all-users-without-uid [::unmatched-event {:id id :?data ?data}]))
+
+(defmethod -event-msg-handler :chsk/ws-ping [msg])
+
+(defmethod -event-msg-handler :chsk/uidport-close [msg])
+
+(defmethod -event-msg-handler :chsk/uidport-open [msg])
 
 (defmethod -event-msg-handler
   :clj-chat.events/message
