@@ -5,11 +5,14 @@
                  [re-frame "0.9.1"]
                  [compojure "1.5.0"]
                  [yogthos/config "0.8"]
-                 [ring "1.4.0"]
+                 [ring "1.5.1"]
+                 [ring/ring-defaults "0.2.3"]
                  [com.taoensso/sente "1.11.0"]
-                 [com.datomic/datomic-free "0.9.5554"]]
+                 [com.datomic/datomic-free "0.9.5554"]
+                 [org.clojure/core.async "0.3.426"]
+                 [http-kit "2.2.0"]]
 
-  :plugins [[lein-cljsbuild "1.1.4"]]
+  :plugins [[lein-cljsbuild "1.1.5"]]
 
   :min-lein-version "2.5.3"
 

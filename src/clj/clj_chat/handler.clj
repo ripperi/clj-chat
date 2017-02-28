@@ -1,10 +1,13 @@
 (ns clj-chat.handler
-  (:require [compojure.core :refer [GET defroutes]]
+  (:require [compojure.core :refer [GET POST defroutes]]
             [compojure.route :refer [resources]]
-            [ring.util.response :refer [resource-response]]
+            [ring.util.response :refer [resource-response content-type]]
             [ring.middleware.reload :refer [wrap-reload]]
+            [ring.middleware.defaults]
             [taoensso.sente :as sente]
-            [datomic.api :as d]))
+            [datomic.api :as datomic]
+            [org.httpkit.server :as http-kit]
+            [taoensso.sente.server-adapters.http-kit :refer [get-sch-adapter]]))
 
 (let [{:keys [ch-recv send-fn connected-uids
               ajax-post-fn ajax-get-or-ws-handshake-fn]}
@@ -17,13 +20,39 @@
   (def connected-uids                connected-uids) ; Watchable, read-only atom
   )
 
-(defroutes routes
-  (GET "/" [] (resource-response "index.html" {:root "public"}))
-  (resources "/")
+(defroutes ring-routes
+  (GET "/" [] (content-type (resource-response "index.html" {:root "public"}) "text/html"))
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
-  (POST "/chsk" req (ring-ajax-post                req)))
+  (POST "/chsk" req (ring-ajax-post                req))
+  (resources "/"))
 
-(def dev-handler (-> #'routes wrap-reload))
+(def ring-handler
+  (ring.middleware.defaults/wrap-defaults
+   ring-routes ring.middleware.defaults/site-defaults))
 
-(def handler routes)
+(def dev-handler (-> #'ring-handler wrap-reload))
 
+(defmulti -event-msg-handler
+  "Multimethod to handle Sente `event-msg`s"
+  :id)
+
+(defmethod -event-msg-handler
+  :default
+  [{:as msg :keys [id ?data event]}]
+  (println "SERVER DEFAULT HANDLER")
+  (println "-id:" id "-data:" ?data "-event:" event))
+
+(defmethod -event-msg-handler
+  :clj-chat.events/message
+  [{:as msg :keys [id ?data]}]
+  (println "SERVER MESSAGE HANDLER")
+  (println "-id:" id "-data:" ?data)
+  (chsk-send! :sente/all-users-without-uid [::message ?data]))
+
+(defonce router_ (atom nil))
+(defn stop-router! [] (when-let [stop-fn @router_] (stop-fn)))
+(defn start-router! []
+  (stop-router!)
+  (reset! router_
+          (sente/start-server-chsk-router!
+           ch-chsk -event-msg-handler)))
