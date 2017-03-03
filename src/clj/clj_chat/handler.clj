@@ -20,8 +20,16 @@
   (def connected-uids                connected-uids) ; Watchable, read-only atom
   )
 
+(defn root-handler
+  [req]
+  (let [{:keys [session params]} req
+        {:keys [user-id]} params]
+    (assoc
+     (content-type (resource-response "index.html" {:root "public"}) "text/html")
+     :session (assoc session :uid (str (java.util.UUID/randomUUID))))))
+
 (defroutes ring-routes
-  (GET "/" [] (content-type (resource-response "index.html" {:root "public"}) "text/html"))
+  (GET "/" req (root-handler req))
   (GET  "/chsk" req (ring-ajax-get-or-ws-handshake req))
   (POST "/chsk" req (ring-ajax-post                req))
   (resources "/"))
