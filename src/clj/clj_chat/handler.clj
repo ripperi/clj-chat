@@ -46,10 +46,9 @@
 
 (defmethod -event-msg-handler
   :default
-  [{:keys [id ?data]}]
-  (println "SERVER DEFAULT HANDLER")
-  (println "-id:" id "-data:" ?data)
-  (chsk-send! :sente/all-users-without-uid [::unmatched-event {:id id :?data ?data}]))
+  [{:keys [id ?data uid]}]
+  (println "unmatched event")
+  (chsk-send! uid [::unmatched-event {:id id :?data ?data}]))
 
 (defmethod -event-msg-handler :chsk/ws-ping [msg])
 
@@ -59,9 +58,9 @@
 
 (defmethod -event-msg-handler
   :clj-chat.events/message
-  [{:as msg :keys [id ?data]}]
+  [{:as msg :keys [id ?data uid]}]
   (println "SERVER MESSAGE HANDLER")
-  (println "-id:" id "-data:" ?data)
+  (println msg)
   (chsk-send! :sente/all-users-without-uid [::message ?data]))
 
 (defonce router_ (atom nil))

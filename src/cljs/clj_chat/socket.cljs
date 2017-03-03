@@ -23,12 +23,11 @@
 (defmethod -event-msg-handler
   :clj-chat.handler/unmatched-event
   [{:keys [?data]}]
-  (println (str "UNMATCHED EVENT: " ?data)))
+  (println ?data))
 
 (defmethod -event-msg-handler
   :clj-chat.handler/message
-  [{:keys [id ?data]}]
-  (println id)
+  [{:keys [?data]}]
   (println ?data))
 
 (defonce router_ (atom nil))
