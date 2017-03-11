@@ -58,10 +58,9 @@
 
 (defmethod -event-msg-handler
   :clj-chat.events/message
-  [{:as msg :keys [id ?data uid]}]
-  (println "SERVER MESSAGE HANDLER")
-  (println msg)
-  (chsk-send! :sente/all-users-without-uid [::message ?data]))
+  [{:keys [?data]}]
+  (doseq [uuid (:any @connected-uids)]
+    (chsk-send! uuid [::message ?data])))
 
 (defonce router_ (atom nil))
 (defn stop-router! [] (when-let [stop-fn @router_] (stop-fn)))
