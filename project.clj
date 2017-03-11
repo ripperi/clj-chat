@@ -2,7 +2,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/clojurescript "1.9.229"]
                  [reagent "0.6.0"]
-                 [re-frame "0.9.1"]
+                 [re-frame "0.9.2"]
                  [compojure "1.5.0"]
                  [yogthos/config "0.8"]
                  [ring "1.5.1"]
@@ -27,7 +27,7 @@
   {:dev
    {:dependencies [[binaryage/devtools "0.8.2"]]
 
-    :plugins      [[lein-figwheel "0.5.7"]]
+    :plugins      [[lein-figwheel "0.5.9"]]
     }}
 
   :cljsbuild
