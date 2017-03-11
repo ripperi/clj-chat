@@ -8,10 +8,13 @@
  (fn  [_ _]
    db/default-db))
 
-(defn send-message [state [_ message]]
-  (if (not-empty (:value message))
-    (do (socket/chsk-send! [::message message])
-        (update state :messages conj message))
+(defn send-msg [msg]
+  (if (not-empty (:value msg))
+    (socket/chsk-send! [::message msg])))
+
+(defn rec-msg [state [_ msg]]
+  (if (not-empty (:value msg))
+    (update state :messages conj msg)
     state))
 
-(re-frame/reg-event-db :send-message send-message)
+(re-frame/reg-event-db :rec-msg rec-msg)

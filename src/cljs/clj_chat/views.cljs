@@ -1,5 +1,6 @@
 (ns clj-chat.views
   (:require [re-frame.core :as re-frame]
+            [clj-chat.events :as events]
             [reagent.core :refer [atom]]))
 
 (defn message-view [message]
@@ -16,7 +17,7 @@
         change-handler (fn [e] (reset! value (-> e .-target .-value)))
         submit-handler (fn [e] (do
                                  (.preventDefault e)
-                                 (re-frame/dispatch [:send-message {:time (str (.getTime (js/Date.))) :value @value}])
+                                 (events/send-msg {:time (str (.getTime (js/Date.))) :value @value})
                                  (reset! value "")))]
     (fn []
       [:div.content.flex-col

@@ -28,7 +28,8 @@
 (defmethod -event-msg-handler
   :clj-chat.handler/message
   [{:keys [?data]}]
-  (println ?data))
+  (println ?data)
+  (dispatch [:rec-msg (second ?data)]))
 
 (defonce router_ (atom nil))
 (defn  stop-router! [] (when-let [stop-f @router_] (stop-f)))
