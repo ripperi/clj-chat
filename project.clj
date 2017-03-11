@@ -10,7 +10,8 @@
                  [com.taoensso/sente "1.11.0"]
                  [com.datomic/datomic-free "0.9.5554"]
                  [org.clojure/core.async "0.3.426"]
-                 [http-kit "2.2.0"]]
+                 [http-kit "2.2.0"]
+                 [com.andrewmcveigh/cljs-time "0.5.0-alpha2"]]
 
   :plugins [[lein-cljsbuild "1.1.5"]]
 

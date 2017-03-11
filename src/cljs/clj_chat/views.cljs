@@ -1,11 +1,14 @@
 (ns clj-chat.views
   (:require [re-frame.core :as re-frame]
             [clj-chat.events :as events]
-            [reagent.core :refer [atom]]))
+            [reagent.core :refer [atom]]
+            [cljs-time.format :as tf :refer [unparse formatter]]
+            [cljs-time.coerce :as coerce :refer [from-long to-long to-string]]
+            [cljs-time.core :as time :refer [to-default-time-zone]]))
 
 (defn message-view [message]
   [:li.message {:key (:time message)}
-   [:span.timestamp (:time message)]
+   [:span.timestamp (unparse (formatter "yyyy-MM-dd HH:mm") (to-default-time-zone (from-long (:time message))))]
    [:span.msg (:value message)]])
 
 (defn messages-view []

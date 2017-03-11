@@ -2,4 +2,7 @@
 
 (def default-db
   {:name "clj-chat"
+   :groups []
+   :group nil
+   :members []
    :messages []})
