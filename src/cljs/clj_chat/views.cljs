@@ -4,12 +4,14 @@
             [reagent.core :refer [atom]]))
 
 (defn message-view [message]
-  [:li.message {:key (:time message)} (:value message)])
+  [:li.message {:key (:time message)}
+   [:span.timestamp (:time message)]
+   [:span.msg (:value message)]])
 
 (defn messages-view []
   (let [messages (re-frame/subscribe [:messages])]
     [:ul.messages
-     (if (not (empty? @messages))
+     (if-not (empty? @messages)
        (map message-view @messages))]))
 
 (defn content-view []

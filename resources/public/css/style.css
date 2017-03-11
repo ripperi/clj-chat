@@ -46,7 +46,7 @@ html, body, #app {
 
 .messages {
   height: 90%;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
@@ -69,4 +69,18 @@ html, body, #app {
 
 .message {
   color: #fff;
+  list-style-type: none;
+  margin-bottom: 5px;
+}
+
+.timestamp {
+  display: block;
+  color: #777777;
+  font-size: small;
+  font-style: italic;
+}
+
+.msg {
+  max-width: 100%;
+  word-break: break-all;
 }
