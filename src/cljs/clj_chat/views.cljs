@@ -33,7 +33,8 @@
          [:input {:type "submit"}]]]])))
 
 (defn groups-view []
-  [:div {:class "groups"}])
+  [:div.groups
+   [:div.add-group {:type "button"} "+"]])
 
 (defn group-view []
   [:div.group
