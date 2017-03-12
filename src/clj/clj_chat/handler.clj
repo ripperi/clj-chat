@@ -87,14 +87,18 @@
 
 (defmethod -event-msg-handler :chsk/ws-ping [msg])
 
-(defmethod -event-msg-handler :chsk/uidport-close [msg]
-  (swap! rooms_ update-in [:public :users] #(vec (remove #{(:uid msg)} %)))
-  (println @rooms_))
+(defmethod -event-msg-handler
+  :chsk/uidport-close
+  [{:keys [uid]}]
+  (remove-user! uid)
+  (println (str "\nuidport-close\n" @users_ "\n" @rooms_ "\n")))
 
-(defmethod -event-msg-handler :chsk/uidport-open [msg]
-  (if-not (= (:uid msg) :taoensso.sente/nil-uid)
-    (swap! rooms_ update-in [:public :users] conj (:uid msg)))
-  (println @rooms_))
+(defmethod -event-msg-handler
+  :chsk/uidport-open
+  [{:keys [uid]}]
+  (add-user! uid)
+  (add-to-room! uid "public")
+  (println (str "\nuidport-open\n" @users_ "\n" @rooms_ "\n")))
 
 ;; -----
 
@@ -112,7 +116,7 @@
   (reset! users_ {})
   (when-let [stop-fn @router_] (stop-fn)))
 (defn start-router! []
-  (swap! rooms_ assoc :public {:name "Public" :users [] :channels []})
+  (add-room! "public")
   (stop-router!)
   (reset! router_
           (sente/start-server-chsk-router!
