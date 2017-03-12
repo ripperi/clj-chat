@@ -111,8 +111,9 @@
 (defmethod -event-msg-handler
   :room/add
   [{:keys [uid ?data]}]
-  (add-room! ?data uid)
-  (add-to-room! uid ?data)
+  (if-not (map? ((keyword ?data) @rooms_))
+    (do (add-room! ?data uid)
+        (add-to-room! uid ?data)))
   (println (str "\nadd room\n" @rooms_ "\n" @users_ "\n")))
 
 ;; ---------- sente router ----------
@@ -123,8 +124,8 @@
   (reset! users_ {})
   (when-let [stop-fn @router_] (stop-fn)))
 (defn start-router! []
-  (add-room! "public")
   (stop-router!)
+  (add-room! "public")
   (reset! router_
           (sente/start-server-chsk-router!
            ch-chsk -event-msg-handler)))
