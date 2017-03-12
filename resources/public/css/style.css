@@ -3,6 +3,7 @@ html, body, #app {
   margin: 0;
   padding: 0;
   font-family: Whitney Helvetica-Neue Helvetica Arial sans-serif;
+  user-select: none;
 }
 
 .flex-row {
@@ -41,7 +42,6 @@ html, body, #app {
   font-weight: 200;
   color: #535559;
   transition: all .25s ease,color .25s ease;
-  user-select: none;
 }
 
 .add-group:hover {
