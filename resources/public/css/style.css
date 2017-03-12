@@ -116,6 +116,48 @@ html, body, #app {
   transition: background-color .25s ease;
 }
 
+@keyframes top-to-bottom {
+  0% {
+    bottom: 100%;
+  }
+  60% {
+    bottom: calc(100% - 200px);
+  }
+  80% {
+    bottom: calc(100% - 180px);
+  }
+  90% {
+    bottom: calc(100% - 185px);
+  }
+  100% {
+    bottom: calc(100% - 180px);
+  }
+}
+
+.modal {
+  position: absolute;
+  left: calc(50% - 150px);
+  bottom: calc(100% - 180px);
+  padding: 10px;
+  z-index: 2;
+  text-align: center;
+  width: 300px;
+  height: 250px;
+  background-color: white;
+  border: 1px solid #7289da;
+  border-radius: 10px;
+  animation-name: top-to-bottom;
+  animation-duration: 0.4s;
+}
+
+.modal-title {
+  position: static;
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin-top: 100px;
+}
+
 .hidden {
   visibility: hidden;
   background-color: rgba(0,0,0,0);

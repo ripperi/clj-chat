@@ -8,8 +8,17 @@
 
 (defn background-dim []
   (if @(re-frame/subscribe [:background-dim])
-    [:div.background-dim {:on-click #(re-frame/dispatch [:toggle-background])}]
+    [:div.background-dim {:on-click #(do (re-frame/dispatch [:toggle-background])
+                                         (re-frame/dispatch [:toggle-add-group]))}]
     [:div.background-dim.hidden]))
+
+(defn add-group []
+  (if @(re-frame/subscribe [:add-group])
+    [:div.modal.top-to-bottom
+     [:form.add-group-wrap
+      [:span.modal-title "Create Group"]
+      [:input.add-group-name {:placeholder "Name"}]
+      [:input {:type "submit"}]]]))
 
 (defn message-view [message]
   [:li.message {:key (:time message)}
@@ -38,7 +47,8 @@
          [:input {:type "submit"}]]]])))
 
 (defn groups-view []
-  (let [toggle-background #(re-frame/dispatch [:toggle-background])]
+  (let [toggle-background #(do (re-frame/dispatch [:toggle-background])
+                                (re-frame/dispatch [:toggle-add-group]))]
     [:div.groups
      [:div.add-group {:type "button" :on-click toggle-background} "+"]]))
 
@@ -52,4 +62,5 @@
   [:div.main.flex-row.overflow-hidden
    (groups-view)
    (group-view)
-   (background-dim)])
+   (background-dim)
+   (add-group)])
