@@ -6,6 +6,10 @@
             [cljs-time.coerce :as coerce :refer [from-long to-long to-string]]
             [cljs-time.core :as time :refer [to-default-time-zone]]))
 
+(defn background-dim []
+  (if @(re-frame/subscribe [:background-dim])
+    [:div.background-dim]))
+
 (defn message-view [message]
   [:li.message {:key (:time message)}
    [:span.timestamp (unparse (formatter "yyyy-MM-dd HH:mm") (to-default-time-zone (from-long (:time message))))]
@@ -29,7 +33,7 @@
        (messages-view)
        [:div.text-wrap
         [:form.text-wrap-inner {:on-submit submit-handler}
-         [:input.text-area{:on-change change-handler :placeholder "Message..." :value @value}]
+         [:input.text-area {:on-change change-handler :placeholder "Message..." :value @value}]
          [:input {:type "submit"}]]]])))
 
 (defn groups-view []
@@ -45,4 +49,5 @@
 (defn main-panel []
   [:div.main.flex-row.overflow-hidden
    (groups-view)
-   (group-view)])
+   (group-view)
+   (background-dim)])

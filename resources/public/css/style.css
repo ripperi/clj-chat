@@ -105,3 +105,11 @@ html, body, #app {
   max-width: 100%;
   word-break: break-all;
 }
+
+.background-dim {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  background-color: rgba(0,0,0,.8);
+}

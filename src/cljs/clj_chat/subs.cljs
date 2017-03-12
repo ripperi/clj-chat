@@ -11,3 +11,8 @@
  :messages
  (fn [db]
    (:messages db)))
+
+(re-frame/reg-sub
+ :background-dim
+ (fn [db]
+   (:background-dim db)))

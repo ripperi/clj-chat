@@ -5,4 +5,5 @@
    :groups []
    :group nil
    :members []
-   :messages []})
+   :messages []
+   :background-dim false})
