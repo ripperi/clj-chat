@@ -112,4 +112,10 @@ html, body, #app {
   height: 100vh;
   z-index: 1;
   background-color: rgba(0,0,0,.8);
+  transition: background-color .25s ease;
+}
+
+.hidden {
+  visibility: hidden;
+  background-color: rgba(0,0,0,0);
 }

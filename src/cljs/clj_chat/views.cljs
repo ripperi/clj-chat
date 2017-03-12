@@ -8,7 +8,8 @@
 
 (defn background-dim []
   (if @(re-frame/subscribe [:background-dim])
-    [:div.background-dim]))
+    [:div.background-dim {:on-click #(re-frame/dispatch [:toggle-background])}]
+    [:div.background-dim.hidden]))
 
 (defn message-view [message]
   [:li.message {:key (:time message)}
@@ -37,8 +38,9 @@
          [:input {:type "submit"}]]]])))
 
 (defn groups-view []
-  [:div.groups
-   [:div.add-group {:type "button"} "+"]])
+  (let [toggle-background #(re-frame/dispatch [:toggle-background])]
+    [:div.groups
+     [:div.add-group {:type "button" :on-click toggle-background} "+"]]))
 
 (defn group-view []
   [:div.group

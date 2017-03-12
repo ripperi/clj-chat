@@ -18,3 +18,8 @@
     state))
 
 (re-frame/reg-event-db :rec-msg rec-msg)
+
+(re-frame/reg-event-db
+ :toggle-background
+ (fn [state]
+   (update state :background-dim not)))
