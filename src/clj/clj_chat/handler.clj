@@ -46,6 +46,31 @@
 
 (defonce users_ (atom {}))
 
+;; ----------functions for managing said atoms----------
+
+(defn add-room!
+  ([name]
+   (add-room! name nil))
+  ([name creator-id]
+   (swap! rooms_ assoc (keyword name) {:name name :users (vec creator-id) :channels ["#general"] :owner creator-id})))
+
+(defn add-user!
+  [id]
+  (swap! users_ assoc (keyword id) []))
+
+(defn add-to-room! [user room]
+  (swap! rooms_ update-in [(keyword room) :users] conj user)
+  (swap! users_ update (keyword user) conj room))
+
+(defn remove-from-room! [user room]
+  (swap! rooms_ update-in [(keyword room) :users] #(vec (remove #{user} %)))
+  (swap! users_ update (keyword user) #(vec (remove #{room} %))))
+
+(defn remove-user! [user]
+  (doseq [room ((keyword user) @users_)]
+    (remove-from-room! user room))
+  (swap! users_ dissoc (keyword user)))
+
 ;; ----------sente event handlers----------
 
 (defmulti -event-msg-handler
