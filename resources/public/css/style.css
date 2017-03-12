@@ -40,7 +40,8 @@ html, body, #app {
   font-size: 40px;
   font-weight: 200;
   color: #535559;
-  transition: all .25s ease,color .25s ease
+  transition: all .25s ease,color .25s ease;
+  user-select: none;
 }
 
 .add-group:hover {
