@@ -16,3 +16,8 @@
  :background-dim
  (fn [db]
    (:background-dim db)))
+
+(re-frame/reg-sub
+ :add-group
+ (fn [db]
+   (:add-group db)))

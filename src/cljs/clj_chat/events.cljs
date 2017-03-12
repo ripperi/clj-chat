@@ -9,13 +9,17 @@
    db/default-db))
 
 (defn send-msg [msg]
-  (if (not-empty (:value msg))
+  (if (seq (:value msg))
     (socket/chsk-send! [::message msg])))
 
 (defn rec-msg [state [_ msg]]
-  (if (not-empty (:value msg))
+  (if (seq (:value msg))
     (update state :messages conj msg)
     state))
+
+(defn add-group [name]
+  (if (seq name)
+    (socket/chsk-send! [:room/add name])))
 
 (re-frame/reg-event-db :rec-msg rec-msg)
 
@@ -23,3 +27,8 @@
  :toggle-background
  (fn [state]
    (update state :background-dim not)))
+
+(re-frame/reg-event-db
+ :toggle-add-group
+ (fn [state]
+   (update state :add-group not)))

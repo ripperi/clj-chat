@@ -52,7 +52,7 @@
   ([name]
    (add-room! name nil))
   ([name creator-id]
-   (swap! rooms_ assoc (keyword name) {:name name :users (vec creator-id) :channels ["#general"] :owner creator-id})))
+   (swap! rooms_ assoc (keyword name) {:name name :users [] :channels ["#general"] :owner creator-id})))
 
 (defn add-user!
   [id]
@@ -107,6 +107,13 @@
   [{:keys [?data]}]
   (doseq [uuid (:any @connected-uids)]
     (chsk-send! uuid [::message ?data])))
+
+(defmethod -event-msg-handler
+  :room/add
+  [{:keys [uid ?data]}]
+  (add-room! ?data uid)
+  (add-to-room! uid ?data)
+  (println (str "\nadd room\n" @rooms_ "\n" @users_ "\n")))
 
 ;; ---------- sente router ----------
 

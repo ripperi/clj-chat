@@ -14,11 +14,18 @@
 
 (defn add-group []
   (if @(re-frame/subscribe [:add-group])
-    [:div.modal.top-to-bottom
-     [:form.add-group-wrap
-      [:span.modal-title "Create Group"]
-      [:input.add-group-name {:placeholder "Name"}]
-      [:input {:type "submit"}]]]))
+    (let [value (atom "")
+          change-handler (fn [e] (reset! value (-> e .-target .-value)))
+          submit-handler (fn [e] (do
+                                   (.preventDefault e)
+                                   (events/add-group @value)
+                                   (re-frame/dispatch [:toggle-background])
+                                   (re-frame/dispatch [:toggle-add-group])))]
+          [:div.modal.top-to-bottom
+           [:form.add-group-wrap {:on-submit submit-handler}
+            [:span.modal-title "Create Group"]
+            [:input.add-group-name {:on-change change-handler :placeholder "Name"}]
+            [:input {:type "submit"}]]])))
 
 (defn message-view [message]
   [:li.message {:key (:time message)}
