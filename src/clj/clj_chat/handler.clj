@@ -40,6 +40,11 @@
 
 (def dev-handler (-> #'ring-handler wrap-reload))
 
+(defonce rooms_ (atom {}))
+(swap! rooms_ assoc :public {:name "Public" :users [] :channels []})
+
+(defonce users_ (atom {}))
+
 (defmulti -event-msg-handler
   "Multimethod to handle Sente `event-msg`s"
   :id)
