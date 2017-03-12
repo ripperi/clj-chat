@@ -40,10 +40,13 @@
 
 (def dev-handler (-> #'ring-handler wrap-reload))
 
+;; ----------atoms to keep track of rooms and users----------
+
 (defonce rooms_ (atom {}))
-(swap! rooms_ assoc :public {:name "Public" :users [] :channels []})
 
 (defonce users_ (atom {}))
+
+;; ----------sente event handlers----------
 
 (defmulti -event-msg-handler
   "Multimethod to handle Sente `event-msg`s"
@@ -54,6 +57,8 @@
   [{:keys [id ?data uid]}]
   (println "unmatched event")
   (chsk-send! uid [::unmatched-event {:id id :?data ?data}]))
+
+;; -----
 
 (defmethod -event-msg-handler :chsk/ws-ping [msg])
 
@@ -66,15 +71,23 @@
     (swap! rooms_ update-in [:public :users] conj (:uid msg)))
   (println @rooms_))
 
+;; -----
+
 (defmethod -event-msg-handler
   :clj-chat.events/message
   [{:keys [?data]}]
   (doseq [uuid (:any @connected-uids)]
     (chsk-send! uuid [::message ?data])))
 
+;; ---------- sente router ----------
+
 (defonce router_ (atom nil))
-(defn stop-router! [] (when-let [stop-fn @router_] (stop-fn)))
+(defn stop-router! [] 
+  (reset! rooms_ {})
+  (reset! users_ {})
+  (when-let [stop-fn @router_] (stop-fn)))
 (defn start-router! []
+  (swap! rooms_ assoc :public {:name "Public" :users [] :channels []})
   (stop-router!)
   (reset! router_
           (sente/start-server-chsk-router!
