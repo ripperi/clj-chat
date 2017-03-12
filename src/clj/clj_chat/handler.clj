@@ -57,9 +57,14 @@
 
 (defmethod -event-msg-handler :chsk/ws-ping [msg])
 
-(defmethod -event-msg-handler :chsk/uidport-close [msg])
+(defmethod -event-msg-handler :chsk/uidport-close [msg]
+  (swap! rooms_ update-in [:public :users] #(vec (remove #{(:uid msg)} %)))
+  (println @rooms_))
 
-(defmethod -event-msg-handler :chsk/uidport-open [msg])
+(defmethod -event-msg-handler :chsk/uidport-open [msg]
+  (if-not (= (:uid msg) :taoensso.sente/nil-uid)
+    (swap! rooms_ update-in [:public :users] conj (:uid msg)))
+  (println @rooms_))
 
 (defmethod -event-msg-handler
   :clj-chat.events/message
