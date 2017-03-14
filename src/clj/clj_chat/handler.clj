@@ -71,6 +71,12 @@
     (remove-from-room! user room))
   (swap! users_ dissoc (keyword user)))
 
+(defn get-rooms-with-keys [rooms users user]
+  (select-keys rooms ((keyword user) users)))
+
+(defn get-rooms [rooms users user]
+  (mapv #((keyword %) rooms) ((keyword user) users)))
+
 ;; ----------sente event handlers----------
 
 (defmulti -event-msg-handler
