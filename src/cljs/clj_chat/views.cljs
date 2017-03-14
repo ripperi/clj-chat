@@ -26,7 +26,7 @@
            [:form.add-group-wrap {:on-submit submit-handler}
             [:span.modal-title "Create Group"]
             [:input.add-group-name {:on-change change-handler :placeholder "Name"}]
-            [:input {:type "submit"}]]])))
+            [:input.btn-big {:type "submit"}]]])))
 
 (defn message-view [message]
   [:li.message {:key (:time message)}

@@ -26,29 +26,51 @@ html, body, #app {
 }
 
 .groups {
-  width: 100px;
-  background-color: #111155;
+  width: 70px;
+  background-color: #171d1f;
+  text-align: center;
+  padding: 0;
 }
 
-.add-group {
+ul.groups {
+  height: auto;
+  margin: 20px auto;
+}
+
+.groups * {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: 1px dashed #535559;
-  margin: 25px;
-  background-color: #222266;
-  text-align: center;
-  font-size: 40px;
-  font-weight: 200;
+  margin: auto;
   color: #535559;
-  transition: all .25s ease,color .25s ease;
+  line-height: 50px;
+  transition: all .25s ease;
+}
+
+.add-group {
+  border: 1px dashed #535559;
+  font-size: 40px;
+}
+
+.select-group {
+  margin-bottom: 5px;
+  background-color: #3a3f40;
+  font-size: 25px;
+  list-style-type: none;
+  overflow: hidden;
+}
+
+.select-group:hover {
+  border-radius: 20%;
+  background-color: #5f95a9;
+  cursor: pointer;
+  color: white;
 }
 
 .add-group:hover {
-  background-color: #7289da;
   cursor: pointer;
-  color: white;
-  border-color: white;
+  color: #65808a;
+  border-color: #223d42;
 }
 
 .group {
@@ -58,12 +80,13 @@ html, body, #app {
 
 .edge-wrap {
   width: 200px;
-  background-color: #333333;
+  background-color: #2e3136;
 }
 
 .content {
   flex: 1;
-  background-color: #444444;
+  background-color: #3a3f40;
+  user-select: text;
 }
 
 .messages {
@@ -83,9 +106,10 @@ html, body, #app {
 }
 
 .text-area {
+  padding: 10px;
   background-color: hsla(0,0%,100%,.06);
   color: #fff;
-  width: 99.3%;
+  width: 90%;
   resize: none;
 }
 
@@ -155,7 +179,27 @@ html, body, #app {
   display: block;
   width: 100%;
   text-align: center;
-  margin-top: 100px;
+  margin: 100px 0 20px 0;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: #7289da;
+}
+
+.btn-big {
+  background-color: #7289da;
+  padding: 10px 20px;
+  margin: 20px auto;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: bold;
+  color: white;
+  transition: background-color .2s ease;
+  position: relative;
+  cursor: pointer;
+  border: 0;
+  border-radius: 2px;
+  display: block;
 }
 
 .hidden {
