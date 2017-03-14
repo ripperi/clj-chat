@@ -77,7 +77,7 @@
   (select-keys rooms ((keyword user) users)))
 
 (defn get-rooms [rooms users user]
-  (mapv #((keyword %) rooms) ((keyword user) users)))
+  (mapv #((keyword %) rooms) (:rooms ((keyword user) users))))
 
 ;; ----------sente event handlers----------
 
@@ -106,6 +106,7 @@
   [{:keys [uid]}]
   (reset! users_ (add-user @users_ uid))
   (add-to-room! rooms_ users_ :public uid)
+  (update-rooms @rooms_ @users_ uid)
   (println (str "\nuidport-open\n" @users_ "\n" @rooms_ "\n")))
 
 ;; -----
@@ -122,7 +123,13 @@
   (if-not (map? ((keyword ?data) @rooms_))
     (do (reset! rooms_ (add-room @rooms_ ?data uid))
         (add-to-room! rooms_ users_ ?data uid)))
+  (update-rooms @rooms_ @users_ uid)
   (println (str "\nadd room\n" @rooms_ "\n" @users_ "\n")))
+
+;; ----------sente send events----------
+
+(defn update-rooms [rooms users user]
+  (chsk-send! user [:update/rooms (get-rooms rooms users user)]))
 
 ;; ---------- sente router ----------
 
