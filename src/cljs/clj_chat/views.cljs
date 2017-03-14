@@ -4,7 +4,8 @@
             [reagent.core :refer [atom]]
             [cljs-time.format :as tf :refer [unparse formatter]]
             [cljs-time.coerce :as coerce :refer [from-long to-long to-string]]
-            [cljs-time.core :as time :refer [to-default-time-zone]]))
+            [cljs-time.core :as time :refer [to-default-time-zone]]
+            [clojure.string :as str]))
 
 (defn background-dim []
   (if @(re-frame/subscribe [:background-dim])
@@ -55,8 +56,16 @@
 
 (defn groups-view []
   (let [toggle-background #(do (re-frame/dispatch [:toggle-background])
-                                (re-frame/dispatch [:toggle-add-group]))]
+                               (re-frame/dispatch [:toggle-add-group]))
+        groups (re-frame/subscribe [:groups])]
     [:div.groups
+     [:ul.groups (map #(vector :li.select-group.overflof-hidden {:key (:id %)}
+                               (as-> % s
+                                 (:name s)
+                                 (str/split s #" ")
+                                 (map first s)
+                                 (str/join s)
+                                 (str/upper-case s))) @groups)]
      [:div.add-group {:type "button" :on-click toggle-background} "+"]]))
 
 (defn group-view []

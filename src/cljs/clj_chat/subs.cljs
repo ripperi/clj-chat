@@ -21,3 +21,8 @@
  :add-group
  (fn [db]
    (:add-group db)))
+
+(re-frame/reg-sub
+ :groups
+ (fn [db]
+   (:groups db)))
