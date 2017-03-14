@@ -32,3 +32,8 @@
  :toggle-add-group
  (fn [state]
    (update state :add-group not)))
+
+(re-frame/reg-event-db
+ :update-groups
+ (fn [state [_ updated-groups]]
+   (assoc state :groups updated-groups)))

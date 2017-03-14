@@ -31,6 +31,12 @@
   (println ?data)
   (dispatch [:rec-msg (second ?data)]))
 
+(defmethod -event-msg-handler
+  :update/rooms
+  [{:keys [?data]}]
+  (println ?data)
+  (dispatch [:update-groups (second ?data)]))
+
 (defonce router_ (atom nil))
 (defn  stop-router! [] (when-let [stop-f @router_] (stop-f)))
 (defn start-router! []
