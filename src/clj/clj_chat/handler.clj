@@ -48,28 +48,30 @@
 
 ;; ----------functions for managing said atoms----------
 
-(defn add-room!
-  ([name]
-   (add-room! name nil))
-  ([name creator-id]
-   (swap! rooms_ assoc (keyword name) {:name name :users [] :channels ["#general"] :owner creator-id})))
+(defn add-room
+  ([rooms name]
+   (add-room rooms name nil))
+  ([rooms name creator-id]
+   (assoc rooms (keyword name) {:id (keyword name) :name name :users [] :channels ["#general"] :owner creator-id})))
 
-(defn add-user!
-  [id]
-  (swap! users_ assoc (keyword id) []))
+(defn add-user
+  ([users id]
+   (add-user users id nil []))
+  ([users id name room-keys]
+   (assoc users (keyword id) {:id id :name name :rooms room-keys})))
 
-(defn add-to-room! [user room]
-  (swap! rooms_ update-in [(keyword room) :users] conj user)
-  (swap! users_ update (keyword user) conj room))
+(defn add-to-room! [rooms users room user]
+  (swap! rooms update-in [(keyword room) :users] conj (keyword user))
+  (swap! users update-in [(keyword user) :rooms] conj (keyword room)))
 
-(defn remove-from-room! [user room]
-  (swap! rooms_ update-in [(keyword room) :users] #(vec (remove #{user} %)))
-  (swap! users_ update (keyword user) #(vec (remove #{room} %))))
+(defn remove-from-room! [rooms users room user]
+  (swap! rooms update-in [(keyword room) :users] #(vec (remove #{(keyword user)} %)))
+  (swap! users update-in [(keyword user) :rooms] #(vec (remove #{(keyword room)} %))))
 
-(defn remove-user! [user]
-  (doseq [room ((keyword user) @users_)]
-    (remove-from-room! user room))
-  (swap! users_ dissoc (keyword user)))
+(defn remove-user! [rooms users user]
+  (doseq [room (:rooms ((keyword user) @users))]
+    (remove-from-room! rooms users room user))
+  (swap! users dissoc (keyword user)))
 
 (defn get-rooms-with-keys [rooms users user]
   (select-keys rooms ((keyword user) users)))
@@ -96,14 +98,14 @@
 (defmethod -event-msg-handler
   :chsk/uidport-close
   [{:keys [uid]}]
-  (remove-user! uid)
+  (remove-user! rooms_ users_ uid)
   (println (str "\nuidport-close\n" @users_ "\n" @rooms_ "\n")))
 
 (defmethod -event-msg-handler
   :chsk/uidport-open
   [{:keys [uid]}]
-  (add-user! uid)
-  (add-to-room! uid "public")
+  (reset! users_ (add-user @users_ uid))
+  (add-to-room! rooms_ users_ :public uid)
   (println (str "\nuidport-open\n" @users_ "\n" @rooms_ "\n")))
 
 ;; -----
@@ -118,20 +120,22 @@
   :room/add
   [{:keys [uid ?data]}]
   (if-not (map? ((keyword ?data) @rooms_))
-    (do (add-room! ?data uid)
-        (add-to-room! uid ?data)))
+    (do (reset! rooms_ (add-room @rooms_ ?data uid))
+        (add-to-room! rooms_ users_ ?data uid)))
   (println (str "\nadd room\n" @rooms_ "\n" @users_ "\n")))
 
 ;; ---------- sente router ----------
 
 (defonce router_ (atom nil))
-(defn stop-router! [] 
+
+(defn stop-router! []
   (reset! rooms_ {})
   (reset! users_ {})
   (when-let [stop-fn @router_] (stop-fn)))
+
 (defn start-router! []
   (stop-router!)
-  (add-room! "public")
+  (reset! rooms_ (add-room @rooms_ "public"))
   (reset! router_
           (sente/start-server-chsk-router!
            ch-chsk -event-msg-handler)))
