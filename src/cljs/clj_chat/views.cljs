@@ -58,7 +58,7 @@
   (let [on-click #(re-frame/dispatch [:select-group (:id self)])
         group (re-frame/subscribe [:group])
         class (if (= @group (:id self))
-                 :li.select-group.selected.overflow-hidden
+                 :li.selected.overflow-hidden
                  :li.select-group.overflow-hidden)]
     [class {:on-click on-click :key (:id self)}
      (as-> self s

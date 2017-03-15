@@ -57,20 +57,39 @@ ul.groups {
   background-color: #3a3f40;
   font-size: 25px;
   list-style-type: none;
-  overflow: hidden;
+}
+
+@keyframes select-group {
+  0% {
+    border-radius: 50%;
+  }
+  50% {
+    border-radius: 25%;
+  }
+  90% {
+    border-radius: 32%;
+  }
+  100% {
+    border-radius: 30%;
+  }
 }
 
 .select-group:hover {
-  border-radius: 20%;
+  border-radius: 30%;
   background-color: #5f95a9;
   cursor: pointer;
   color: white;
+  animation: select-group;
+  animation-duration: .5s;
 }
 
 .selected {
-  border-radius: 20%;
+  margin-bottom: 5px;
+  border-radius: 30%;
   background-color: #5f95a9;
   color: white;
+  font-size: 25px;
+  list-style-type: none;
 }
 
 .add-group:hover {
@@ -96,6 +115,7 @@ ul.groups {
 }
 
 .messages {
+  padding-right: 10px;
   height: 90%;
   overflow-y: auto;
   overflow-x: hidden;
@@ -150,14 +170,17 @@ ul.groups {
   0% {
     bottom: 100%;
   }
+  40% {
+    bottom: calc(100% - 180px);
+  }
   60% {
-    bottom: calc(100% - 200px);
+    bottom: calc(100% - 175px);
   }
   80% {
     bottom: calc(100% - 180px);
   }
   90% {
-    bottom: calc(100% - 185px);
+    bottom: calc(100% - 178px);
   }
   100% {
     bottom: calc(100% - 180px);
@@ -177,7 +200,7 @@ ul.groups {
   border: 1px solid #7289da;
   border-radius: 10px;
   animation-name: top-to-bottom;
-  animation-duration: 0.4s;
+  animation-duration: 0.5s;
 }
 
 .modal-title {
