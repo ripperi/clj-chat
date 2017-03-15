@@ -79,6 +79,11 @@
 (defn get-rooms [rooms users user]
   (mapv #((keyword %) rooms) (:rooms ((keyword user) users))))
 
+;; ----------sente send events----------
+
+(defn update-rooms [rooms users user]
+  (chsk-send! user [:update/rooms (get-rooms rooms users user)]))
+
 ;; ----------sente event handlers----------
 
 (defmulti -event-msg-handler
@@ -125,11 +130,6 @@
         (add-to-room! rooms_ users_ ?data uid)))
   (update-rooms @rooms_ @users_ uid)
   (println (str "\nadd room\n" @rooms_ "\n" @users_ "\n")))
-
-;; ----------sente send events----------
-
-(defn update-rooms [rooms users user]
-  (chsk-send! user [:update/rooms (get-rooms rooms users user)]))
 
 ;; ---------- sente router ----------
 
