@@ -67,6 +67,12 @@ ul.groups {
   color: white;
 }
 
+.selected {
+  border-radius: 20%;
+  background-color: #5f95a9;
+  color: white;
+}
+
 .add-group:hover {
   cursor: pointer;
   color: #65808a;

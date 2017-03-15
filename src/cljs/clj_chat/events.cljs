@@ -37,3 +37,8 @@
  :update-groups
  (fn [state [_ updated-groups]]
    (assoc state :groups updated-groups)))
+
+(re-frame/reg-event-db
+ :select-group
+ (fn [state [_ group-id]]
+   (assoc state :group group-id)))

@@ -54,18 +54,26 @@
          [:input.text-area {:on-change change-handler :placeholder "Message..." :value @value}]
          [:input {:type "submit"}]]]])))
 
+(defn select-group [self]
+  (let [on-click #(re-frame/dispatch [:select-group (:id self)])
+        group (re-frame/subscribe [:group])
+        class (if (= @group (:id self))
+                 :li.select-group.selected.overflow-hidden
+                 :li.select-group.overflow-hidden)]
+    [class {:on-click on-click :key (:id self)}
+     (as-> self s
+       (:name s)
+       (str/split s #" ")
+       (map first s)
+       (str/join s)
+       (str/upper-case s))]))
+
 (defn groups-view []
   (let [toggle-background #(do (re-frame/dispatch [:toggle-background])
                                (re-frame/dispatch [:toggle-add-group]))
         groups (re-frame/subscribe [:groups])]
     [:div.groups
-     [:ul.groups (map #(vector :li.select-group.overflof-hidden {:key (:id %)}
-                               (as-> % s
-                                 (:name s)
-                                 (str/split s #" ")
-                                 (map first s)
-                                 (str/join s)
-                                 (str/upper-case s))) @groups)]
+     [:ul.groups (doall (map select-group @groups))]
      [:div.add-group {:type "button" :on-click toggle-background} "+"]]))
 
 (defn group-view []
