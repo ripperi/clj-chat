@@ -80,6 +80,21 @@
 (defn get-rooms [rooms users user]
   (mapv #((keyword %) rooms) (:rooms ((keyword user) users))))
 
+(defn login-needed? [users user]
+  (nil? (:name ((keyword user) users))))
+
+(defn valid-message? [msg]
+  (not (or (nil? (:channel msg)) (nil? (:group msg)))))
+
+(defn allowed-message? [uuid msg]
+  (let [user ((keyword uuid) @users_)
+        users-rooms (:rooms user)
+        msg-room (:group msg)
+        msg-channel (:channel msg)
+        room-channels (:channels ((keyword msg-room) @rooms_))]
+    (and (some #(= msg-room %) users-rooms)
+         (some #(= msg-channel %) room-channels))))
+
 ;; ----------sente send events----------
 
 (defn update-rooms [rooms users user]
@@ -119,9 +134,10 @@
 
 (defmethod -event-msg-handler
   :clj-chat.events/message
-  [{:keys [?data]}]
-  (doseq [uuid (map :id (:users ((keyword (:group ?data)) @rooms_)))]
-    (chsk-send! uuid [::message ?data])))
+  [{:keys [uid ?data]}]
+  (if (and (valid-message? ?data) (allowed-message? uid ?data))
+    (doseq [uuid (map :id (:users ((keyword (:group ?data)) @rooms_)))]
+      (chsk-send! uuid [::message ?data]))))
 
 (defmethod -event-msg-handler
   :room/add
