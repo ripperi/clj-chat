@@ -120,7 +120,7 @@
 (defmethod -event-msg-handler
   :clj-chat.events/message
   [{:keys [?data]}]
-  (doseq [uuid (:any @connected-uids)]
+  (doseq [uuid (map :id (:users ((keyword (:group ?data)) @rooms_)))]
     (chsk-send! uuid [::message ?data])))
 
 (defmethod -event-msg-handler
