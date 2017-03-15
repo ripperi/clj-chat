@@ -97,6 +97,27 @@ ul.groups {
   border-color: #223d42;
 }
 
+.channels {
+  padding: 0;
+}
+
+.channel {
+  list-style-type: none;
+  cursor: pointer;
+  padding: 10px 0;
+  border-radius: 0;
+  color: #6c6e71;
+}
+
+.active {
+  background-color: #3a3f40;
+  color: white;
+}
+
+.channel:hover {
+  color: white;
+}
+
 .group {
   display: flex;
   flex: 1;

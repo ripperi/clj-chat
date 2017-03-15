@@ -52,7 +52,8 @@
   ([rooms name]
    (add-room rooms name nil))
   ([rooms name creator-id]
-   (assoc rooms (keyword name) {:id name :name name :users [] :channels ["#general"] :owner creator-id})))
+   (assoc rooms
+    (keyword name) {:id name :name name :users [] :channels ["#general"] :owner creator-id})))
 
 (defn add-user
   ([users id]
@@ -61,11 +62,11 @@
    (assoc users (keyword id) {:id id :name name :rooms room-keys})))
 
 (defn add-to-room! [rooms users room user]
-  (swap! rooms update-in [(keyword room) :users] conj (keyword user))
+  (swap! rooms update-in [(keyword room) :users] conj {:id user :name (:name ((keyword user) @users))})
   (swap! users update-in [(keyword user) :rooms] conj room))
 
 (defn remove-from-room! [rooms users room user]
-  (swap! rooms update-in [(keyword room) :users] #(vec (remove #{(keyword user)} %)))
+  (swap! rooms update-in [(keyword room) :users] #(vec (remove #{{:id user :name (:name ((keyword user) @users))}} %)))
   (swap! users update-in [(keyword user) :rooms] #(vec (remove #{room} %))))
 
 (defn remove-user! [rooms users user]
@@ -110,7 +111,7 @@
   :chsk/uidport-open
   [{:keys [uid]}]
   (reset! users_ (add-user @users_ uid))
-  (add-to-room! rooms_ users_ "p u blic" uid)
+  (add-to-room! rooms_ users_ "public" uid)
   (update-rooms @rooms_ @users_ uid)
   (println (str "\nuidport-open\n" @users_ "\n" @rooms_ "\n")))
 
@@ -142,7 +143,7 @@
 
 (defn start-router! []
   (stop-router!)
-  (reset! rooms_ (add-room @rooms_ "p u blic"))
+  (reset! rooms_ (add-room @rooms_ "public"))
   (reset! router_
           (sente/start-server-chsk-router!
            ch-chsk -event-msg-handler)))

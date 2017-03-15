@@ -6,5 +6,6 @@
    :group nil
    :members []
    :messages []
+   :channel nil
    :background-dim false
    :add-group false})

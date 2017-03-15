@@ -40,5 +40,10 @@
 
 (re-frame/reg-event-db
  :select-group
- (fn [state [_ group-id]]
-   (assoc state :group group-id)))
+ (fn [state [_ group]]
+   (assoc state :group group)))
+
+(re-frame/reg-event-db
+ :select-channel
+ (fn [state [_ channel]]
+   (assoc state :channel channel)))

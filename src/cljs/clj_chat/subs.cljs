@@ -13,6 +13,16 @@
    (:messages db)))
 
 (re-frame/reg-sub
+ :filtered-messages
+ (fn [db]
+   (let [messages (:messages db)
+         channel (:channel db)
+         group (:id (:group db))]
+     (filter (fn [msg]
+               (and (= (:group msg) group) (= (:channel msg) channel)))
+             messages))))
+
+(re-frame/reg-sub
  :background-dim
  (fn [db]
    (:background-dim db)))
@@ -31,3 +41,13 @@
  :group
  (fn [db]
    (:group db)))
+
+(re-frame/reg-sub
+ :channel
+ (fn [db]
+   (:channel db)))
+
+(re-frame/reg-sub
+ :group-id
+ (fn [db]
+   (:id (:group db))))

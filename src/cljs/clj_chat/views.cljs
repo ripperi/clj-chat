@@ -34,17 +34,21 @@
    [:span.msg (:value message)]])
 
 (defn messages-view []
-  (let [messages (re-frame/subscribe [:messages])]
+  (let [messages (re-frame/subscribe [:filtered-messages])]
     [:ul.messages
-     (if-not (empty? @messages)
-       (map message-view @messages))]))
+     (map message-view @messages)]))
 
 (defn content-view []
   (let [value (atom "")
+        channel-name (re-frame/subscribe [:channel])
+        group-id (re-frame/subscribe [:group-id])
         change-handler (fn [e] (reset! value (-> e .-target .-value)))
         submit-handler (fn [e] (do
                                  (.preventDefault e)
-                                 (events/send-msg {:time (str (.getTime (js/Date.))) :value @value})
+                                 (events/send-msg {:time (str (.getTime (js/Date.)))
+                                                   :value @value
+                                                   :channel @channel-name
+                                                   :group @group-id})
                                  (reset! value "")))]
     (fn []
       [:div.content.flex-col
@@ -55,9 +59,9 @@
          [:input {:type "submit"}]]]])))
 
 (defn select-group [self]
-  (let [on-click #(re-frame/dispatch [:select-group (:id self)])
+  (let [on-click #(re-frame/dispatch [:select-group self])
         group (re-frame/subscribe [:group])
-        class (if (= @group (:id self))
+        class (if (= @group self)
                  :li.selected.overflow-hidden
                  :li.select-group.overflow-hidden)]
     [class {:on-click on-click :key (:id self)}
@@ -68,10 +72,19 @@
        (str/join s)
        (str/upper-case s))]))
 
+(defn channel [channel]
+  (let [on-click #(re-frame/dispatch [:select-channel channel])
+        active-channel (re-frame/subscribe [:channel])
+        class (if (= channel @active-channel)
+                :li.channel.active
+                :li.channel)]
+    [class {:on-click on-click :key channel} channel]))
+
 (defn channels []
   (let [group (re-frame/subscribe [:group])]
     [:div.edge-wrap
-     [:div.group-name @group]]))
+     [:div.group-name (:name @group)]
+     [:ul.channels (doall (map channel (:channels @group)))]]))
 
 (defn groups-view []
   (let [toggle-background #(do (re-frame/dispatch [:toggle-background])
