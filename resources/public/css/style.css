@@ -2,7 +2,7 @@ html, body, #app {
   height: 100%;
   margin: 0;
   padding: 0;
-  font-family: Whitney Helvetica-Neue Helvetica Arial sans-serif;
+  font-family: ‘Whitney SSm A’, ‘Whitney SSm B’, “ff-meta-web-pro”, sans-serif;
   user-select: none;
 }
 
@@ -45,6 +45,7 @@ ul.groups {
   color: #535559;
   line-height: 50px;
   transition: all .25s ease;
+  font-size: 20px;
 }
 
 .add-group {
@@ -55,7 +56,6 @@ ul.groups {
 .select-group {
   margin-bottom: 5px;
   background-color: #3a3f40;
-  font-size: 25px;
   list-style-type: none;
 }
 
@@ -88,7 +88,6 @@ ul.groups {
   border-radius: 30%;
   background-color: #5f95a9;
   color: white;
-  font-size: 25px;
   list-style-type: none;
 }
 
@@ -103,9 +102,16 @@ ul.groups {
   flex: 1;
 }
 
+.group-name {
+  padding: 15px 0;
+  color: white;
+  border-bottom: 1px solid #1e2124;
+}
+
 .edge-wrap {
   width: 200px;
   background-color: #2e3136;
+  text-align: center;
 }
 
 .content {

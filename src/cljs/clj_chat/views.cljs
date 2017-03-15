@@ -68,6 +68,11 @@
        (str/join s)
        (str/upper-case s))]))
 
+(defn channels []
+  (let [group (re-frame/subscribe [:group])]
+    [:div.edge-wrap
+     [:div.group-name @group]]))
+
 (defn groups-view []
   (let [toggle-background #(do (re-frame/dispatch [:toggle-background])
                                (re-frame/dispatch [:toggle-add-group]))
@@ -78,7 +83,7 @@
 
 (defn group-view []
   [:div.group
-   [:div.edge-wrap]
+   (channels)
    [content-view]
    [:div.edge-wrap]])
 
