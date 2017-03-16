@@ -22,11 +22,11 @@
                                    (events/add-group @value)
                                    (re-frame/dispatch [:toggle-background])
                                    (re-frame/dispatch [:toggle-add-group])))]
-          [:div.modal.top-to-bottom
-           [:form.add-group-wrap {:on-submit submit-handler}
-            [:span.modal-title "Create Group"]
-            [:input.add-group-name {:on-change change-handler :placeholder "Name"}]
-            [:input.btn-big {:type "submit"}]]])))
+        [:div.modal.top-to-bottom
+         [:form.add-group-wrap {:on-submit submit-handler}
+          [:span.modal-title "Create Group"]
+          [:input.add-group-name {:on-change change-handler :placeholder "Name"}]
+          [:input.btn-big {:type "submit"}]]])))
 
 (defn message-view [message]
   [:li.message {:key (:time message)}
@@ -100,9 +100,24 @@
    [content-view]
    [:div.edge-wrap]])
 
+(defn login []
+  (let [value (atom "")
+        change-handler (fn [e] (reset! value (-> e .-target .-value)))
+        submit-handler (fn [e] (do
+                                 (.preventDefault e)
+                                 (events/login @value)))]
+    [:div.modal.top-to-bottom
+     [:form.add-group-wrap {:on-submit submit-handler}
+      [:span.modal-title "Choose Username"]
+      [:input.add-group-name {:on-change change-handler :placeholder "Username"}]
+      [:input.btn-big {:type "submit"}]]]))
+
 (defn main-panel []
-  [:div.main.flex-row.overflow-hidden
-   (groups-view)
-   (group-view)
-   (background-dim)
-   (add-group)])
+  (let [login-needed? (re-frame/subscribe [:login-needed?])]
+    (if @login-needed?
+      (login)
+      [:div.main.flex-row.overflow-hidden
+       (groups-view)
+       (group-view)
+       (background-dim)
+       (add-group)])))

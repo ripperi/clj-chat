@@ -37,6 +37,12 @@
   (println ?data)
   (dispatch [:update-groups (second ?data)]))
 
+(defmethod -event-msg-handler
+  :update/login-need
+  [{:keys [?data]}]
+  (println ?data)
+  (dispatch [:update-login-need (second ?data)]))
+
 (defonce router_ (atom nil))
 (defn  stop-router! [] (when-let [stop-f @router_] (stop-f)))
 (defn start-router! []

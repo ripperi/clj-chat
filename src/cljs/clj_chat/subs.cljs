@@ -51,3 +51,8 @@
  :group-id
  (fn [db]
    (:id (:group db))))
+
+(re-frame/reg-sub
+ :login-needed?
+ (fn [db]
+   (:login-needed? db)))

@@ -21,6 +21,9 @@
   (if (seq name)
     (socket/chsk-send! [:room/add name])))
 
+(defn login [username]
+  (socket/chsk-send! [:update/login username]))
+
 (re-frame/reg-event-db :rec-msg rec-msg)
 
 (re-frame/reg-event-db
@@ -47,3 +50,8 @@
  :select-channel
  (fn [state [_ channel]]
    (assoc state :channel channel)))
+
+(re-frame/reg-event-db
+ :update-login-need
+ (fn [state [_ bool]]
+   (assoc state :login-needed? bool)))

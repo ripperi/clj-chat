@@ -8,4 +8,5 @@
    :messages []
    :channel nil
    :background-dim false
-   :add-group false})
+   :add-group false
+   :login-needed? true})
