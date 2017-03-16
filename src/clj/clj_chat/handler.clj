@@ -53,7 +53,7 @@
    (add-room rooms name nil))
   ([rooms name creator-id]
    (assoc rooms
-    (keyword name) {:id name :name name :users [] :channels ["#general"] :owner creator-id})))
+    (keyword name) {:id name :name name :users {} :channels ["#general"] :owner creator-id})))
 
 (defn add-user
   ([users id]
@@ -62,11 +62,11 @@
    (assoc users (keyword id) {:id id :name name :rooms room-keys})))
 
 (defn add-to-room! [rooms users room user]
-  (swap! rooms update-in [(keyword room) :users] conj {:id user :name (:name ((keyword user) @users))})
+  (swap! rooms update-in [(keyword room) :users] assoc (keyword user) {:id user :name nil})
   (swap! users update-in [(keyword user) :rooms] conj room))
 
 (defn remove-from-room! [rooms users room user]
-  (swap! rooms update-in [(keyword room) :users] #(vec (remove #{{:id user :name (:name ((keyword user) @users))}} %)))
+  (swap! rooms update-in [(keyword room) :users] dissoc (keyword user))
   (swap! users update-in [(keyword user) :rooms] #(vec (remove #{room} %))))
 
 (defn remove-user! [rooms users user]
@@ -75,10 +75,13 @@
   (swap! users dissoc (keyword user)))
 
 (defn get-rooms-with-keys [rooms users user]
-  (select-keys rooms ((keyword user) users)))
+  (select-keys rooms (map keyword (get-in users [(keyword user) :rooms]))))
 
 (defn get-rooms [rooms users user]
-  (mapv #((keyword %) rooms) (:rooms ((keyword user) users))))
+  (map #((keyword %) rooms) (:rooms ((keyword user) users))))
+
+(defn get-users-in-room [rooms room]
+  (map :id (vals (get-in rooms [(keyword room) :users]))))
 
 (defn login-needed? [users user]
   (nil? (:name ((keyword user) users))))
@@ -95,10 +98,22 @@
     (and (some #(= msg-room %) users-rooms)
          (some #(= msg-channel %) room-channels))))
 
+(defn update-username-for-rooms! [rooms users user username]
+  (let [users-rooms (get-in @users_ [(keyword user) :rooms])]
+    (doseq [room users-rooms]
+      (swap! rooms assoc-in [(keyword room) :users (keyword user) :name] username))))
+
+(defn set-username! [rooms users user username]
+  (swap! users assoc-in [(keyword user) :name] username)
+  (update-username-for-rooms! rooms users user username))
+
 ;; ----------sente send events----------
 
-(defn update-rooms [rooms users user]
+(defn update-clients-rooms [rooms users user]
   (chsk-send! user [:update/rooms (get-rooms rooms users user)]))
+
+(defn send-login-need-status [uid bool]
+  (chsk-send! uid [:update/login-need bool]))
 
 ;; ----------sente event handlers----------
 
@@ -120,15 +135,15 @@
   :chsk/uidport-close
   [{:keys [uid]}]
   (remove-user! rooms_ users_ uid)
-  (println (str "\nuidport-close\n" @users_ "\n" @rooms_ "\n")))
+  (println (str "\nuidport-close\n" @users_ "\n\n" @rooms_ "\n")))
 
 (defmethod -event-msg-handler
   :chsk/uidport-open
   [{:keys [uid]}]
   (reset! users_ (add-user @users_ uid))
   (add-to-room! rooms_ users_ "public" uid)
-  (update-rooms @rooms_ @users_ uid)
-  (println (str "\nuidport-open\n" @users_ "\n" @rooms_ "\n")))
+  (update-clients-rooms @rooms_ @users_ uid)
+  (println (str "\nuidport-open\n" @users_ "\n\n" @rooms_ "\n")))
 
 ;; -----
 
@@ -136,7 +151,7 @@
   :clj-chat.events/message
   [{:keys [uid ?data]}]
   (if (and (valid-message? ?data) (allowed-message? uid ?data))
-    (doseq [uuid (map :id (:users ((keyword (:group ?data)) @rooms_)))]
+    (doseq [uuid (get-users-in-room @rooms_ (:group ?data))]
       (chsk-send! uuid [::message ?data]))))
 
 (defmethod -event-msg-handler
@@ -145,8 +160,16 @@
   (if-not (map? ((keyword ?data) @rooms_))
     (do (reset! rooms_ (add-room @rooms_ ?data uid))
         (add-to-room! rooms_ users_ ?data uid)))
-  (update-rooms @rooms_ @users_ uid)
+  (update-clients-rooms @rooms_ @users_ uid)
   (println (str "\nadd room\n" @rooms_ "\n" @users_ "\n")))
+
+(defmethod -event-msg-handler
+  :update/login
+  [{:keys [uid ?data]}]
+  (if (login-needed? @users_ uid)
+    (do (set-username! rooms_ users_ uid ?data)
+        (send-login-need-status uid false)
+        (println (str "\nLOGIN\n" @users_ "\n\n" @rooms_)))))
 
 ;; ---------- sente router ----------
 
