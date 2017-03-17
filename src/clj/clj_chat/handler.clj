@@ -102,6 +102,18 @@
   (println (str "\nadd room\n" @core/rooms_ "\n" @core/users_ "\n")))
 
 (defmethod -event-msg-handler
+  :add/channel
+  [{:keys [uid ?data]}]
+  (let [room (:group ?data)
+        channel (:channel ?data)]
+    (if (and (core/room-owner? room uid)
+             (core/channel-name-free? room channel))
+      (do (core/add-channel! room channel)
+          (update-neighbouring-users-rooms uid)
+          (update-clients-rooms uid))))
+  (println (str "\nadd channel\n" @core/rooms_ "\n" @core/users_ "\n")))
+
+(defmethod -event-msg-handler
   :update/login
   [{:keys [uid ?data]}]
   (if (core/login-needed? uid)

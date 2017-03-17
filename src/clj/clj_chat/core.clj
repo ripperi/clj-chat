@@ -80,3 +80,10 @@
 
 (defn room-name-free? [room]
   (not (contains? @rooms_ (keyword room))))
+
+(defn channel-name-free? [room channel]
+  (not (some #(= channel %) (get-in @rooms_ [(keyword room) :channels]))))
+
+(defn room-owner? [room user]
+  (= user (get-in @rooms_ [(keyword room) :owner])))
+
