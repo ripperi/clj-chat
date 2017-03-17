@@ -61,6 +61,9 @@
   ([users id name room-keys]
    (assoc users (keyword id) {:id id :name name :rooms room-keys})))
 
+(defn add-channel! [rooms room channel]
+  (swap! rooms update-in [(keyword room) :channels] conj channel))
+
 (defn add-to-room! [rooms users room user]
   (swap! rooms update-in [(keyword room) :users] assoc (keyword user) {:id user :name nil})
   (swap! users update-in [(keyword user) :rooms] conj room))
@@ -141,8 +144,6 @@
   :chsk/uidport-open
   [{:keys [uid]}]
   (reset! users_ (add-user @users_ uid))
-  (add-to-room! rooms_ users_ "public" uid)
-  (update-clients-rooms @rooms_ @users_ uid)
   (println (str "\nuidport-open\n" @users_ "\n\n" @rooms_ "\n")))
 
 ;; -----
@@ -167,7 +168,9 @@
   :update/login
   [{:keys [uid ?data]}]
   (if (login-needed? @users_ uid)
-    (do (set-username! rooms_ users_ uid ?data)
+    (do (add-to-room! rooms_ users_ "public" uid)
+        (set-username! rooms_ users_ uid ?data)
+        (update-clients-rooms @rooms_ @users_ uid)
         (send-login-need-status uid false)
         (println (str "\nLOGIN\n" @users_ "\n\n" @rooms_)))))
 
@@ -183,6 +186,8 @@
 (defn start-router! []
   (stop-router!)
   (reset! rooms_ (add-room @rooms_ "public"))
+  (add-channel! rooms_ :public "#general2")
+  (add-channel! rooms_ :public "#general3")
   (reset! router_
           (sente/start-server-chsk-router!
            ch-chsk -event-msg-handler)))
