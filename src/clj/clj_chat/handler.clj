@@ -46,6 +46,10 @@
 (defn update-clients-rooms [user]
   (chsk-send! user [:update/rooms (core/get-rooms user)]))
 
+(defn update-neighbouring-users-rooms [user]
+  (doseq [nb (core/get-neighbouring-users user)]
+    update-clients-rooms nb))
+
 (defn send-login-need-status [uid bool]
   (chsk-send! uid [:update/login-need bool]))
 
@@ -68,6 +72,8 @@
 (defmethod -event-msg-handler
   :chsk/uidport-close
   [{:keys [uid]}]
+  (core/remove-user-from-rooms! uid)
+  (update-neighbouring-users-rooms uid)
   (core/remove-user! uid)
   (println (str "\nuidport-close\n" @core/users_ "\n\n" @core/rooms_ "\n")))
 
@@ -89,10 +95,10 @@
 (defmethod -event-msg-handler
   :room/add
   [{:keys [uid ?data]}]
-  (if-not (map? ((keyword ?data) @core/rooms_))
+  (if (core/room-name-free? ?data)
     (do (core/add-room! ?data uid)
-        (core/add-to-room! ?data uid)))
-  (update-clients-rooms uid)
+        (core/add-to-room! ?data uid)
+        (update-clients-rooms uid)))
   (println (str "\nadd room\n" @core/rooms_ "\n" @core/users_ "\n")))
 
 (defmethod -event-msg-handler

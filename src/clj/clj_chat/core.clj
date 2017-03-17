@@ -31,9 +31,11 @@
   (swap! rooms_ update-in [(keyword room) :users] dissoc (keyword user))
   (swap! users_ update-in [(keyword user) :rooms] #(vec (remove #{room} %))))
 
-(defn remove-user! [user]
+(defn remove-user-from-rooms! [user]
   (doseq [room (:rooms ((keyword user) @users_))]
-    (remove-from-room! room user))
+    (remove-from-room! room user)))
+
+(defn remove-user! [user]
   (swap! users_ dissoc (keyword user)))
 
 (defn update-username-for-rooms! [user username]
@@ -75,3 +77,6 @@
         room-channels (:channels ((keyword msg-room) @rooms_))]
     (and (some #(= msg-room %) users-rooms)
          (some #(= msg-channel %) room-channels))))
+
+(defn room-name-free? [room]
+  (not (contains? @rooms_ (keyword room))))
