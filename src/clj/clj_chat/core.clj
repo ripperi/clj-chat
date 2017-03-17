@@ -54,6 +54,13 @@
 (defn get-users-in-room [room]
   (map :id (vals (get-in @rooms_ [(keyword room) :users]))))
 
+(defn get-neighbouring-users [user]
+  (distinct (reduce concat (map
+                            #(remove
+                              #{user}
+                              (get-users-in-room %))
+                            (get-in @users_ [(keyword user) :rooms])))))
+
 (defn login-needed? [user]
   (nil? (:name ((keyword user) @users_))))
 
