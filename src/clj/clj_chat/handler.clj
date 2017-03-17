@@ -7,6 +7,7 @@
             [taoensso.sente :as sente]
             [datomic.api :as datomic]
             [org.httpkit.server :as http-kit]
+            [config.core :refer [env]]
             [taoensso.sente.server-adapters.http-kit :refer [get-sch-adapter]]))
 
 (let [{:keys [ch-recv send-fn connected-uids
@@ -35,10 +36,6 @@
   (resources "/"))
 
 (def ring-handler
-  (ring.middleware.defaults/wrap-defaults
-   ring-routes ring.middleware.defaults/site-defaults))
-
-(def dev-handler (-> #'ring-handler wrap-reload))
 
 ;; ----------atoms to keep track of rooms and users----------
 
@@ -109,6 +106,9 @@
 (defn set-username! [rooms users user username]
   (swap! users assoc-in [(keyword user) :name] username)
   (update-username-for-rooms! rooms users user username))
+  (-> #'ring-routes
+      (cond-> (env :port) wrap-reload)
+      (ring.middleware.defaults/wrap-defaults ring.middleware.defaults/site-defaults)))
 
 ;; ----------sente send events----------
 
