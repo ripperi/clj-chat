@@ -68,6 +68,11 @@
    (not (nil? (:group db)))))
 
 (re-frame/reg-sub
+ :show-content?
+ (fn [db]
+   (if (or (:channel db) (:member db)) true)))
+
+(re-frame/reg-sub
  :login-needed?
  (fn [db]
    (:login-needed? db)))

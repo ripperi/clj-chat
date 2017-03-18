@@ -41,6 +41,7 @@
 (defn content-view []
   (let [value (atom "")
         channel-name (re-frame/subscribe [:channel])
+        show-content? (re-frame/subscribe [:show-content?])
         group-id (re-frame/subscribe [:group-id])
         change-handler (fn [e] (reset! value (-> e .-target .-value)))
         submit-handler (fn [e] (do
@@ -51,7 +52,7 @@
                                                    :group @group-id})
                                  (reset! value "")))]
     (fn []
-      (if @channel-name
+      (if @show-content?
         [:div.content.flex-col
          (messages-view)
          [:div.text-wrap
@@ -62,7 +63,8 @@
 
 (defn select-group [self]
   (let [on-click #(do (re-frame/dispatch [:select-group self])
-                      (re-frame/dispatch [:select-channel nil]))
+                      (re-frame/dispatch [:select-channel nil])
+                      (re-frame/dispatch [:select-member nil]))
         group (re-frame/subscribe [:group])
         class (if (= @group self)
                  :li.selected.overflow-hidden
@@ -76,7 +78,8 @@
        (str/upper-case s))]))
 
 (defn channel [channel]
-  (let [on-click #(re-frame/dispatch [:select-channel channel])
+  (let [on-click #(do (re-frame/dispatch [:select-channel channel])
+                      (re-frame/dispatch [:select-member nil]))
         active-channel (re-frame/subscribe [:channel])
         class (if (= channel @active-channel)
                 :li.channel.active
@@ -90,7 +93,8 @@
      [:ul.channels (doall (map channel (:channels @group)))]]))
 
 (defn member [member]
-  (let [on-click #(re-frame/dispatch [:select-member member])
+  (let [on-click #(do (re-frame/dispatch [:select-member member])
+                      (re-frame/dispatch [:select-channel nil]))
         active-member (re-frame/subscribe [:member])
         class (if (= member @active-member)
                 :li.channel.active

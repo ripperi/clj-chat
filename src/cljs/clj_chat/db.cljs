@@ -5,6 +5,7 @@
    :groups []
    :group nil
    :members []
+   :member nil
    :messages []
    :channel nil
    :background-dim false
