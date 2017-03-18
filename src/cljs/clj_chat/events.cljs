@@ -36,10 +36,20 @@
  (fn [state]
    (update state :add-group not)))
 
+;; (re-frame/reg-event-db
+;;  :update-groups
+;;  (fn [state [_ updated-groups]]
+;;    (assoc state :groups updated-groups)))
+
 (re-frame/reg-event-db
  :update-groups
  (fn [state [_ updated-groups]]
-   (assoc state :groups updated-groups)))
+   (let [group-selected? (not (nil? (:group state)))
+         updated-groups (assoc state :groups updated-groups)
+         selected-group-id (get-in state [:group :id])]
+     (if group-selected?
+       (assoc updated-groups :group (some #(when (= (:id %) selected-group-id) %) (:groups updated-groups)))
+       updated-groups))))
 
 (re-frame/reg-event-db
  :select-group
