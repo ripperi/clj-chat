@@ -59,7 +59,8 @@
          [:input {:type "submit"}]]]])))
 
 (defn select-group [self]
-  (let [on-click #(re-frame/dispatch [:select-group self])
+  (let [on-click #(do (re-frame/dispatch [:select-group self])
+                      (re-frame/dispatch [:select-channel nil]))
         group (re-frame/subscribe [:group])
         class (if (= @group self)
                  :li.selected.overflow-hidden
@@ -86,6 +87,20 @@
      [:div.group-name (:name @group)]
      [:ul.channels (doall (map channel (:channels @group)))]]))
 
+(defn member [member]
+  (let [on-click #(re-frame/dispatch [:select-member member])
+        active-member (re-frame/subscribe [:member])
+        class (if (= member @active-member)
+                :li.channel.active
+                :li.channel)]
+    [class {:on-click on-click :key (:id member)} (:name member)]))
+
+(defn members []
+  (let [members (re-frame/subscribe [:members])]
+    [:div
+     [:div.group-name "Members"]
+     [:ul.channels (doall (map member @members))]]))
+
 (defn groups-view []
   (let [toggle-background #(do (re-frame/dispatch [:toggle-background])
                                (re-frame/dispatch [:toggle-add-group]))
@@ -98,7 +113,8 @@
   [:div.group
    (channels)
    [content-view]
-   [:div.edge-wrap]])
+   [:div.edge-wrap
+    (members)]])
 
 (defn login []
   (let [value (atom "")

@@ -48,7 +48,7 @@
 
 (defn update-neighbouring-users-rooms [user]
   (doseq [nb (core/get-neighbouring-users user)]
-    update-clients-rooms nb))
+    (update-clients-rooms nb)))
 
 (defn send-login-need-status [uid bool]
   (chsk-send! uid [:update/login-need bool]))
@@ -74,7 +74,7 @@
   [{:keys [uid]}]
   (core/remove-user-from-rooms! uid)
   (update-neighbouring-users-rooms uid)
-  (core/remove-user! uid)
+  (core/remove-user-from-users! uid)
   (println (str "\nuidport-close\n" @core/users_ "\n\n" @core/rooms_ "\n")))
 
 (defmethod -event-msg-handler
@@ -120,6 +120,7 @@
     (do (core/add-to-room! "public" uid)
         (core/set-username! uid ?data)
         (update-clients-rooms uid)
+        (update-neighbouring-users-rooms uid)
         (send-login-need-status uid false)
         (println (str "\nLOGIN\n" @core/users_ "\n\n" @core/rooms_)))))
 

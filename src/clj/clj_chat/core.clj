@@ -24,7 +24,9 @@
    (swap! users_ assoc (keyword id) {:id id :name name :rooms room-keys})))
 
 (defn add-to-room! [room user]
-  (swap! rooms_ update-in [(keyword room) :users] assoc (keyword user) {:id user :name nil})
+  (swap! rooms_ update-in
+         [(keyword room) :users]
+         assoc (keyword user) {:id user :name (get-in @users_ [(keyword user) :name])})
   (swap! users_ update-in [(keyword user) :rooms] conj room))
 
 (defn remove-from-room! [room user]
@@ -33,9 +35,9 @@
 
 (defn remove-user-from-rooms! [user]
   (doseq [room (:rooms ((keyword user) @users_))]
-    (remove-from-room! room user)))
+    (swap! rooms_ update-in [(keyword room) :users] dissoc (keyword user))))
 
-(defn remove-user! [user]
+(defn remove-user-from-users! [user]
   (swap! users_ dissoc (keyword user)))
 
 (defn update-username-for-rooms! [user username]

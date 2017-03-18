@@ -48,6 +48,16 @@
    (:channel db)))
 
 (re-frame/reg-sub
+ :member
+ (fn [db]
+   (:member db)))
+
+(re-frame/reg-sub
+ :members
+ (fn [db]
+   (vals (get-in db [:group :users]))))
+
+(re-frame/reg-sub
  :group-id
  (fn [db]
    (:id (:group db))))

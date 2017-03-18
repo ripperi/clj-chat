@@ -52,6 +52,11 @@
    (assoc state :channel channel)))
 
 (re-frame/reg-event-db
+ :select-member
+ (fn [state [_ member]]
+   (assoc state :member member)))
+
+(re-frame/reg-event-db
  :update-login-need
  (fn [state [_ bool]]
    (assoc state :login-needed? bool)))
