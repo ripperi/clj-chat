@@ -51,12 +51,14 @@
                                                    :group @group-id})
                                  (reset! value "")))]
     (fn []
-      [:div.content.flex-col
-       (messages-view)
-       [:div.text-wrap
-        [:form.text-wrap-inner {:on-submit submit-handler}
-         [:input.text-area {:on-change change-handler :placeholder "Message..." :value @value}]
-         [:input {:type "submit"}]]]])))
+      (if @channel-name
+        [:div.content.flex-col
+         (messages-view)
+         [:div.text-wrap
+          [:form.text-wrap-inner {:on-submit submit-handler}
+           [:input.text-area {:on-change change-handler :placeholder "Message..." :value @value}]
+           [:input {:type "submit"}]]]]
+        [:div.content.flex-col]))))
 
 (defn select-group [self]
   (let [on-click #(do (re-frame/dispatch [:select-group self])
@@ -129,11 +131,12 @@
       [:input.btn-big {:type "submit"}]]]))
 
 (defn main-panel []
-  (let [login-needed? (re-frame/subscribe [:login-needed?])]
+  (let [login-needed? (re-frame/subscribe [:login-needed?])
+        group-selected? @(re-frame/subscribe [:group-selected?])]
     (if @login-needed?
       (login)
       [:div.main.flex-row.overflow-hidden
        (groups-view)
-       (group-view)
+       (if group-selected? (group-view))
        (background-dim)
        (add-group)])))
