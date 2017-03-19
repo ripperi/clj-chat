@@ -30,12 +30,14 @@
 
 (defn message-view [message]
   [:li.message {:key (:time message)}
-   [:span.timestamp (unparse (formatter "yyyy-MM-dd HH:mm") (to-default-time-zone (from-long (:time message))))]
+   [:h5.message-header
+    [:span.username (get-in message [:from :name])]
+    [:span.timestamp (unparse (formatter "yyyy-MM-dd HH:mm") (to-default-time-zone (from-long (:time message))))]]
    [:span.msg (:value message)]])
 
 (defn messages-view []
   (let [messages (re-frame/subscribe [:filtered-messages])]
-    [:ul.messages
+    [:ul.messages.scroller
      (map message-view @messages)]))
 
 (defn content-view []
