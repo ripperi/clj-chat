@@ -1,6 +1,6 @@
 # clj-chat
 
-Chat service build with clojure and clojurescript.
+Chat service build with clojure and clojurescript.  
 Deployed at: http://clj-chat.herokuapp.com/
 
 ## Development Mode
@@ -16,6 +16,13 @@ Start server in repl with clj-chat.server/-main
 Figwheel will automatically push cljs changes to the browser.
 
 Wait a bit, then browse to [http://localhost:3000](http://localhost:3000).
+
+## TO DO:
+
+* Add channel & add member
+* Message persistence (Datomic or in-memory)
+* Authentication (Google auth?)
+* Voice channels
 
 ## Production Build
 
