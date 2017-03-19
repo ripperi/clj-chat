@@ -1,7 +1,7 @@
 (ns clj-chat.views
   (:require [re-frame.core :as re-frame]
             [clj-chat.events :as events]
-            [reagent.core :refer [atom]]
+            [reagent.core :refer [atom create-class]]
             [cljs-time.format :as tf :refer [unparse formatter]]
             [cljs-time.coerce :as coerce :refer [from-long to-long to-string]]
             [cljs-time.core :as time :refer [to-default-time-zone]]
@@ -36,9 +36,16 @@
    [:span.msg (:value message)]])
 
 (defn messages-view []
-  (let [messages (re-frame/subscribe [:filtered-messages])]
-    [:ul.messages.scroller
-     (map message-view @messages)]))
+  (let [messages (re-frame/subscribe [:filtered-messages])
+        scroll-bottom #(.scrollIntoView
+                        (.getElementById js/document "dummy-elem")
+                        #js {"behavior" "smooth"})]
+    (create-class
+     {:component-did-update scroll-bottom
+      :component-did-mount scroll-bottom
+      :reagent-render (fn [] [:ul.messages.scroller
+                              (map message-view @messages)
+                              [:div {:id "dummy-elem"}]])})))
 
 (defn content-view []
   (let [value (atom "")
@@ -47,21 +54,21 @@
         member (re-frame/subscribe [:member])
         group-id (re-frame/subscribe [:group-id])
         change-handler (fn [e] (reset! value (-> e .-target .-value)))
-        submit-handler (fn [e] (do
-                                 (.preventDefault e)
-                                 (if (and @channel-name (not @member))
-                                   (events/send-msg {:time (str (.getTime (js/Date.)))
-                                                     :value @value
-                                                     :channel @channel-name
-                                                     :group @group-id})
-                                   (events/send-direct-message {:time (str (.getTime (js/Date.)))
-                                                               :value @value
-                                                               :to @member}))
-                                 (reset! value "")))]
+        submit-handler (fn [e]
+                         (.preventDefault e)
+                         (if (and @channel-name (not @member))
+                           (events/send-msg            {:time (str (.getTime (js/Date.)))
+                                                        :value @value
+                                                        :channel @channel-name
+                                                        :group @group-id})
+                           (events/send-direct-message {:time (str (.getTime (js/Date.)))
+                                                        :value @value
+                                                        :to @member}))
+                         (reset! value ""))]
     (fn []
       (if @show-content?
         [:div.content.flex-col
-         (messages-view)
+         [messages-view]
          [:form.text-wrap {:on-submit submit-handler}
           [:div.text-wrap-inner.overflow-hidden
            [:input.text-area {:on-change change-handler :placeholder "Message..." :value @value}]
