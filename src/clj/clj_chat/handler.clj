@@ -62,7 +62,7 @@
 (defmethod -event-msg-handler
   :default
   [{:keys [id ?data uid]}]
-  (println "unmatched event")
+  #_(println "unmatched event")
   (chsk-send! uid [::unmatched-event {:id id :?data ?data}]))
 
 ;; -----
@@ -75,13 +75,13 @@
   (core/remove-user-from-rooms! uid)
   (update-neighbouring-users-rooms uid)
   (core/remove-user-from-users! uid)
-  (println (str "\nuidport-close\n" @core/users_ "\n\n" @core/rooms_ "\n")))
+  #_(println (str "\nuidport-close\n" @core/users_ "\n\n" @core/rooms_ "\n")))
 
 (defmethod -event-msg-handler
   :chsk/uidport-open
   [{:keys [uid]}]
   (core/add-user! uid)
-  (println (str "\nuidport-open\n" @core/users_ "\n\n" @core/rooms_ "\n")))
+  #_(println (str "\nuidport-open\n" @core/users_ "\n\n" @core/rooms_ "\n")))
 
 ;; -----
 
@@ -108,7 +108,7 @@
     (do (core/add-room! ?data uid)
         (core/add-to-room! ?data uid)
         (update-clients-rooms uid)))
-  (println (str "\nadd room\n" @core/rooms_ "\n" @core/users_ "\n")))
+  #_(println (str "\nadd room\n" @core/rooms_ "\n" @core/users_ "\n")))
 
 (defmethod -event-msg-handler
   :add/channel
@@ -120,7 +120,7 @@
       (do (core/add-channel! room channel)
           (update-neighbouring-users-rooms uid)
           (update-clients-rooms uid))))
-  (println (str "\nadd channel\n" @core/rooms_ "\n" @core/users_ "\n")))
+  #_(println (str "\nadd channel\n" @core/rooms_ "\n" @core/users_ "\n")))
 
 (defmethod -event-msg-handler
   :update/login
@@ -131,7 +131,7 @@
         (update-clients-rooms uid)
         (update-neighbouring-users-rooms uid)
         (send-login-need-status uid false)
-        (println (str "\nLOGIN\n" @core/users_ "\n\n" @core/rooms_)))))
+        #_(println (str "\nLOGIN\n" @core/users_ "\n\n" @core/rooms_)))))
 
 ;; ---------- sente router ----------
 

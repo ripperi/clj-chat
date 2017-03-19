@@ -50,7 +50,9 @@
      :jar true
      :compiler     {:main            clj-chat.core
                     :output-to       "resources/public/js/compiled/app.js"
-                    :optimizations   :advanced
+                    :output-dir      "resources/public/js/compiled"
+                    :asset-path      "js/compiled"
+                    :optimizations   :none
                     :closure-defines {goog.DEBUG false}
                     :pretty-print    false}}
 

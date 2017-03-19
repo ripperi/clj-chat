@@ -18,35 +18,35 @@
 (defmethod -event-msg-handler
   :default
   [{:keys [id]}]
-  (println id))
+  #_(println id))
 
 (defmethod -event-msg-handler
   :clj-chat.handler/unmatched-event
   [{:keys [?data]}]
-  (println ?data))
+  #_(println ?data))
 
 (defmethod -event-msg-handler
   :clj-chat.handler/message
   [{:keys [?data]}]
-  (println ?data)
+  #_(println ?data)
   (dispatch [:rec-msg (second ?data)]))
 
 (defmethod -event-msg-handler
   :clj-chat.handler/direct-message
   [{:keys [?data]}]
-  (println ?data)
+  #_(println ?data)
   (dispatch [:rec-dir-msg (second ?data)]))
 
 (defmethod -event-msg-handler
   :update/rooms
   [{:keys [?data]}]
-  (println ?data)
+  #_(println ?data)
   (dispatch [:update-groups (second ?data)]))
 
 (defmethod -event-msg-handler
   :update/login-need
   [{:keys [?data]}]
-  (println ?data)
+  #_(println ?data)
   (dispatch [:update-login-need (second ?data)]))
 
 (defonce router_ (atom nil))
