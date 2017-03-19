@@ -6,7 +6,6 @@
             [ring.middleware.reload :refer [wrap-reload]]
             [ring.middleware.defaults]
             [taoensso.sente :as sente]
-            [datomic.api :as datomic]
             [org.httpkit.server :as http-kit]
             [config.core :refer [env]]
             [taoensso.sente.server-adapters.http-kit :refer [get-sch-adapter]]))

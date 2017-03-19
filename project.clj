@@ -1,6 +1,6 @@
 (defproject clj-chat "0.1.0-SNAPSHOT"
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.229"]
+                 [org.clojure/clojurescript "1.9.494"]
                  [reagent "0.6.0"]
                  [re-frame "0.9.2"]
                  [compojure "1.5.0"]
@@ -8,7 +8,6 @@
                  [ring "1.5.1"]
                  [ring/ring-defaults "0.2.3"]
                  [com.taoensso/sente "1.11.0"]
-                 [com.datomic/datomic-free "0.9.5554"]
                  [org.clojure/core.async "0.3.426"]
                  [http-kit "2.2.0"]
                  [com.andrewmcveigh/cljs-time "0.5.0-alpha2"]]
@@ -52,7 +51,7 @@
                     :output-to       "resources/public/js/compiled/app.js"
                     :output-dir      "resources/public/js/compiled"
                     :asset-path      "js/compiled"
-                    :optimizations   :none
+                    :optimizations   :simple
                     :closure-defines {goog.DEBUG false}
                     :pretty-print    false}}
 
