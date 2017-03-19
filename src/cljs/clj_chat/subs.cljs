@@ -16,11 +16,17 @@
  :filtered-messages
  (fn [db]
    (let [messages (:messages db)
+         direct-messages (:direct-messages db)
          channel (:channel db)
+         member (get-in db [:member :id])
          group (:id (:group db))]
-     (filter (fn [msg]
-               (and (= (:group msg) group) (= (:channel msg) channel)))
-             messages))))
+     (if-not member
+       (filter (fn [msg]
+                 (and (= (:group msg) group) (= (:channel msg) channel)))
+               messages)
+       (filter (fn [msg]
+                 (or (= member (get-in msg [:from :id])) (= member (get-in msg [:to :id]))))
+               direct-messages)))))
 
 (re-frame/reg-sub
  :background-dim

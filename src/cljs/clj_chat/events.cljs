@@ -12,10 +12,17 @@
   (if (seq (:value msg))
     (socket/chsk-send! [::message msg])))
 
+(defn send-direct-message [msg]
+  (if (seq (:value msg))
+    (socket/chsk-send! [::direct-message msg])))
+
 (defn rec-msg [state [_ msg]]
   (if (seq (:value msg))
     (update state :messages conj msg)
     state))
+
+(defn rec-dir-msg [state [_ msg]]
+    (update state :direct-messages conj msg))
 
 (defn add-group [name]
   (if (seq name)
@@ -25,6 +32,8 @@
   (socket/chsk-send! [:update/login username]))
 
 (re-frame/reg-event-db :rec-msg rec-msg)
+
+(re-frame/reg-event-db :rec-dir-msg rec-dir-msg)
 
 (re-frame/reg-event-db
  :toggle-background

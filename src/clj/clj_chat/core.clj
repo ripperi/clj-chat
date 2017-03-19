@@ -55,6 +55,9 @@
 (defn get-rooms [user]
   (map #((keyword %) @rooms_) (:rooms ((keyword user) @users_))))
 
+(defn get-user [user]
+  ((keyword user) @users_))
+
 (defn get-users-in-room [room]
   (map :id (vals (get-in @rooms_ [(keyword room) :users]))))
 

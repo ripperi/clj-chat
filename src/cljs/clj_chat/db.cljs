@@ -7,6 +7,7 @@
    :members []
    :member nil
    :messages []
+   :direct-messages []
    :channel nil
    :background-dim false
    :add-group false

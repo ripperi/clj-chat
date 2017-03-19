@@ -40,16 +40,21 @@
 
 (defn content-view []
   (let [value (atom "")
-        channel-name (re-frame/subscribe [:channel])
         show-content? (re-frame/subscribe [:show-content?])
+        channel-name (re-frame/subscribe [:channel])
+        member (re-frame/subscribe [:member])
         group-id (re-frame/subscribe [:group-id])
         change-handler (fn [e] (reset! value (-> e .-target .-value)))
         submit-handler (fn [e] (do
                                  (.preventDefault e)
-                                 (events/send-msg {:time (str (.getTime (js/Date.)))
-                                                   :value @value
-                                                   :channel @channel-name
-                                                   :group @group-id})
+                                 (if (and @channel-name (not @member))
+                                   (events/send-msg {:time (str (.getTime (js/Date.)))
+                                                     :value @value
+                                                     :channel @channel-name
+                                                     :group @group-id})
+                                   (events/send-direct-message {:time (str (.getTime (js/Date.)))
+                                                               :value @value
+                                                               :to @member}))
                                  (reset! value "")))]
     (fn []
       (if @show-content?

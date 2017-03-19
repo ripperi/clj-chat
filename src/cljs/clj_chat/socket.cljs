@@ -32,6 +32,12 @@
   (dispatch [:rec-msg (second ?data)]))
 
 (defmethod -event-msg-handler
+  :clj-chat.handler/direct-message
+  [{:keys [?data]}]
+  (println ?data)
+  (dispatch [:rec-dir-msg (second ?data)]))
+
+(defmethod -event-msg-handler
   :update/rooms
   [{:keys [?data]}]
   (println ?data)

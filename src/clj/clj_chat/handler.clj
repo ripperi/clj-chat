@@ -90,7 +90,16 @@
   [{:keys [uid ?data]}]
   (if (and (core/valid-message? ?data) (core/allowed-message? uid ?data))
     (doseq [uuid (core/get-users-in-room (:group ?data))]
-      (chsk-send! uuid [::message ?data]))))
+      (chsk-send! uuid [::message (assoc ?data :from (select-keys (core/get-user uid) [:id :name]))]))))
+
+(defmethod -event-msg-handler
+  :clj-chat.events/direct-message
+  [{:keys [uid ?data]}]
+  (let [msg [::direct-message (assoc ?data :from (select-keys (core/get-user uid) [:id :name]))]
+        to-uid (get-in ?data [:to :id])]
+    (when-not (= uid to-uid)
+        (chsk-send! to-uid msg))
+    (chsk-send! uid msg)))
 
 (defmethod -event-msg-handler
   :room/add
