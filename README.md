@@ -1,6 +1,7 @@
 # clj-chat
 
-A [re-frame](https://github.com/Day8/re-frame) application designed to ... well, that part is up to you.
+Chat service build with clojure and clojurescript.
+Deployed at: http://clj-chat.herokuapp.com/
 
 ## Development Mode
 
@@ -10,10 +11,11 @@ A [re-frame](https://github.com/Day8/re-frame) application designed to ... well,
 lein clean
 lein figwheel dev
 ```
+Start server in repl with clj-chat.server/-main
 
 Figwheel will automatically push cljs changes to the browser.
 
-Wait a bit, then browse to [http://localhost:3449](http://localhost:3449).
+Wait a bit, then browse to [http://localhost:3000](http://localhost:3000).
 
 ## Production Build
 
