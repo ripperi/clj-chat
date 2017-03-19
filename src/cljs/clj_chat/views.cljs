@@ -62,10 +62,10 @@
       (if @show-content?
         [:div.content.flex-col
          (messages-view)
-         [:div.text-wrap
-          [:form.text-wrap-inner {:on-submit submit-handler}
+         [:form.text-wrap {:on-submit submit-handler}
+          [:div.text-wrap-inner.overflow-hidden
            [:input.text-area {:on-change change-handler :placeholder "Message..." :value @value}]
-           [:input {:type "submit"}]]]]
+           [:input.text-area-btn {:type "submit" :value "send"}]]]]
         [:div.content.flex-col]))))
 
 (defn select-group [self]

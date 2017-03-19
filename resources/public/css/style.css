@@ -154,19 +154,44 @@ ul.groups {
 .text-wrap {
   flex: 1;
   margin: 0 20px;
+  border-top: 1px solid #414449;
+  padding: 20px 0;
 }
 
 .text-wrap-inner {
-  padding: 20px 0;
-  border-top: 1px solid #eceeef;
+  display: flex;
+  width: 100%;
+  height: 40px;
+  border: 2px solid #686a6e;
+  border-radius: 5px;
+  background-color: #424549;
 }
 
 .text-area {
-  padding: 10px;
-  background-color: hsla(0,0%,100%,.06);
-  color: #fff;
-  width: 90%;
+  flex: 1;
+  height: 100%;
+  background-color: #424549;
+  border: none;
+  border-right: 1px solid #686a6e;
+  color: #babbbc;
   resize: none;
+}
+
+.text-area::-webkit-input-placeholder{color: #686a6e;}
+.text-area::-moz-placeholder{color: #686a6e;opacity: 1;}
+.text-area:-moz-placeholder{color: #686a6e;opacity: 1;}
+.text-area:-ms-input-placeholder{color: #686a6e;}
+
+.text-area-btn {
+  height: 100%;
+  background-color: #424549;
+  border: none;
+  color: #686a6e;
+}
+
+.text-area-btn:hover {
+  color: #ffffff;
+  cursor: pointer;
 }
 
 .message-header {
@@ -177,6 +202,7 @@ ul.groups {
   color: #bdbec0;
   list-style-type: none;
   margin-bottom: 5px;
+  border-top: 1px solid #474a4f;
 }
 
 .username {
