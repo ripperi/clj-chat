@@ -103,7 +103,10 @@
 (defn channels []
   (let [group (re-frame/subscribe [:group])]
     [:div.edge-wrap
-     [:div.group-name (:name @group)]
+     [:header.header.clickable
+      [:div.header-title (:name @group)]
+      [:span.add "+"]]
+     [:div.separator]
      [:ul.channels (doall (map channel (:channels @group)))]]))
 
 (defn member [member]
@@ -118,7 +121,10 @@
 (defn members []
   (let [members (re-frame/subscribe [:members])]
     [:div
-     [:div.group-name "Members"]
+     [:header.header.clickable
+      [:div.header-title "Members"]
+      [:span.add "+"]]
+     [:div.separator]
      [:ul.channels (doall (map member @members))]]))
 
 (defn groups-view []
