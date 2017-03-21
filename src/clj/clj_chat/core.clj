@@ -43,6 +43,7 @@
     (swap! rooms_ update-in [(keyword room) :users] dissoc (keyword user))))
 
 (defn remove-user-from-users! [user]
+  (swap! usernames_ dissoc (keyword (get-in @users_ [(keyword user) :name])))
   (swap! users_ dissoc (keyword user)))
 
 (defn update-username-for-rooms! [user username]
