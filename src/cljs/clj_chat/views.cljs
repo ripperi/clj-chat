@@ -9,8 +9,7 @@
 
 (defn background-dim []
   (if @(re-frame/subscribe [:background-dim])
-    [:div.background-dim {:on-click #(do (re-frame/dispatch [:toggle-background])
-                                         (re-frame/dispatch [:toggle-add-group]))}]
+    [:div.background-dim {:on-click #(re-frame/dispatch [:toggle-modals-off])}]
     [:div.background-dim.hidden]))
 
 (defn add-group []
@@ -20,13 +19,27 @@
           submit-handler (fn [e] (do
                                    (.preventDefault e)
                                    (events/add-group @value)
-                                   (re-frame/dispatch [:toggle-background])
-                                   (re-frame/dispatch [:toggle-add-group])))]
+                                   (re-frame/dispatch [:toggle-modal :add-group])))]
         [:div.modal.top-to-bottom
          [:form.add-group-wrap {:on-submit submit-handler}
           [:span.modal-title "Create Group"]
           [:input.add-group-name {:on-change change-handler :placeholder "Name"}]
           [:input.btn-big {:type "submit"}]]])))
+
+(defn add-channel []
+  (if @(re-frame/subscribe [:add-channel])
+    (let [value (atom "")
+          group @(re-frame/subscribe [:group-id])
+          change-handler (fn [e] (reset! value (-> e .-target .-value)))
+          submit-handler (fn [e] (do
+                                   (.preventDefault e)
+                                   (events/add-channel group @value)
+                                   (re-frame/dispatch [:toggle-modals-off])))]
+      [:div.modal.top-to-bottom
+       [:form.add-group-wrap {:on-submit submit-handler}
+        [:span.modal-title "Add Channel"]
+        [:input.add-group-name {:on-change change-handler :placeholder "Name"}]
+        [:input.btn-big {:type "submit"}]]])))
 
 (defn message-view [message]
   [:li.message {:key (:time message)}
@@ -101,9 +114,10 @@
     [class {:on-click on-click :key channel} channel]))
 
 (defn channels []
-  (let [group (re-frame/subscribe [:group])]
+  (let [group (re-frame/subscribe [:group])
+        on-click #(re-frame/dispatch [:toggle-modal :add-channel])]
     [:div.edge-wrap
-     [:header.header.clickable
+     [:header.header.clickable {:on-click on-click}
       [:div.header-title (:name @group)]
       [:span.add "+"]]
      [:div.separator]
@@ -128,12 +142,11 @@
      [:ul.channels (doall (map member @members))]]))
 
 (defn groups-view []
-  (let [toggle-background #(do (re-frame/dispatch [:toggle-background])
-                               (re-frame/dispatch [:toggle-add-group]))
+  (let [toggle-modal #(re-frame/dispatch [:toggle-modal :add-group])
         groups (re-frame/subscribe [:groups])]
     [:div.groups
      [:ul.groups (doall (map select-group @groups))]
-     [:div.add-group {:type "button" :on-click toggle-background} "+"]]))
+     [:div.add-group {:type "button" :on-click toggle-modal} "+"]]))
 
 (defn group-view []
   [:div.group
@@ -163,4 +176,5 @@
        (groups-view)
        (if group-selected? (group-view))
        (background-dim)
-       (add-group)])))
+       (add-group)
+       (add-channel)])))

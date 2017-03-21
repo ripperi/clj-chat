@@ -11,4 +11,5 @@
    :channel nil
    :background-dim false
    :add-group false
+   :add-channel false
    :login-needed? true})

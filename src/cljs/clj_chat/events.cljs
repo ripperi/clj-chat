@@ -28,6 +28,10 @@
   (if (seq name)
     (socket/chsk-send! [:room/add name])))
 
+(defn add-channel [group channel]
+  (if (and (seq group) (seq channel))
+    (socket/chsk-send! [:add/channel {:group group :channel channel}])))
+
 (defn login [username]
   (socket/chsk-send! [:update/login username]))
 
@@ -36,14 +40,17 @@
 (re-frame/reg-event-db :rec-dir-msg rec-dir-msg)
 
 (re-frame/reg-event-db
- :toggle-background
+ :toggle-modals-off
  (fn [state]
-   (update state :background-dim not)))
+   (-> (assoc state :background-dim false)
+       (assoc :add-channel false)
+       (assoc :add-group false))))
 
 (re-frame/reg-event-db
- :toggle-add-group
- (fn [state]
-   (update state :add-group not)))
+ :toggle-modal
+ (fn [state [_ modal]]
+   (-> (update state modal not)
+       (update :background-dim not))))
 
 ;; (re-frame/reg-event-db
 ;;  :update-groups
