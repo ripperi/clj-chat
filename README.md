@@ -19,7 +19,6 @@ Wait a bit, then browse to [http://localhost:3000](http://localhost:3000).
 
 ## TO DO:
 
-* Add channel & add member
 * Message persistence (Datomic or in-memory)
 * Authentication (Google auth?)
 * Voice channels
