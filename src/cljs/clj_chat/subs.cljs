@@ -44,6 +44,11 @@
    (:add-channel db)))
 
 (re-frame/reg-sub
+ :add-member
+ (fn [db]
+   (:add-member db)))
+
+(re-frame/reg-sub
  :groups
  (fn [db]
    (:groups db)))

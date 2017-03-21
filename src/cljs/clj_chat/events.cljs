@@ -32,6 +32,10 @@
   (if (and (seq group) (seq channel))
     (socket/chsk-send! [:add/channel {:group group :channel channel}])))
 
+(defn add-member [group member]
+  (if (and (seq group) (seq member))
+    (socket/chsk-send! [:add/member {:group group :member member}])))
+
 (defn login [username]
   (socket/chsk-send! [:update/login username]))
 
@@ -43,6 +47,7 @@
  :toggle-modals-off
  (fn [state]
    (-> (assoc state :background-dim false)
+       (assoc :add-member false)
        (assoc :add-channel false)
        (assoc :add-group false))))
 

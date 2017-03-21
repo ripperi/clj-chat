@@ -24,7 +24,7 @@
          [:form.add-group-wrap {:on-submit submit-handler}
           [:span.modal-title "Create Group"]
           [:input.add-group-name {:on-change change-handler :placeholder "Name"}]
-          [:input.btn-big {:type "submit"}]]])))
+          [:input.btn-big {:type "submit" :value "Create"}]]])))
 
 (defn add-channel []
   (if @(re-frame/subscribe [:add-channel])
@@ -39,7 +39,22 @@
        [:form.add-group-wrap {:on-submit submit-handler}
         [:span.modal-title "Add Channel"]
         [:input.add-group-name {:on-change change-handler :placeholder "Name"}]
-        [:input.btn-big {:type "submit"}]]])))
+        [:input.btn-big {:type "submit" :value "Add"}]]])))
+
+(defn add-member []
+  (if @(re-frame/subscribe [:add-member])
+    (let [value (atom "")
+          group @(re-frame/subscribe [:group-id])
+          change-handler (fn [e] (reset! value (-> e .-target .-value)))
+          submit-handler (fn [e] (do
+                                   (.preventDefault e)
+                                   (events/add-member group @value)
+                                   (re-frame/dispatch [:toggle-modals-off])))]
+      [:div.modal.top-to-bottom
+       [:form.add-group-wrap {:on-submit submit-handler}
+        [:span.modal-title "Add Member"]
+        [:input.add-group-name {:on-change change-handler :placeholder "Username"}]
+        [:input.btn-big {:type "submit" :value "Add"}]]])))
 
 (defn message-view [message]
   [:li.message {:key (:time message)}
@@ -133,9 +148,10 @@
     [class {:on-click on-click :key (:id member)} (:name member)]))
 
 (defn members []
-  (let [members (re-frame/subscribe [:members])]
+  (let [members (re-frame/subscribe [:members])
+        on-click #(re-frame/dispatch [:toggle-modal :add-member])]
     [:div
-     [:header.header.clickable
+     [:header.header.clickable {:on-click on-click}
       [:div.header-title "Members"]
       [:span.add "+"]]
      [:div.separator]
@@ -177,4 +193,5 @@
        (if group-selected? (group-view))
        (background-dim)
        (add-group)
-       (add-channel)])))
+       (add-channel)
+       (add-member)])))

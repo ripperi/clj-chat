@@ -12,4 +12,5 @@
    :background-dim false
    :add-group false
    :add-channel false
+   :add-member false
    :login-needed? true})
