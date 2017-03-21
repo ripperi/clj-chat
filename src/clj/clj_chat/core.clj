@@ -6,6 +6,8 @@
 
 (defonce users_ (atom {}))
 
+(defonce usernames_ (atom {}))
+
 ;; ----------functions for managing said atoms----------
 
 (defn add-room!
@@ -29,6 +31,9 @@
          assoc (keyword user) {:id user :name (get-in @users_ [(keyword user) :name])})
   (swap! users_ update-in [(keyword user) :rooms] conj room))
 
+(defn add-member! [room username]
+  (add-to-room! room ((keyword username) @usernames_)))
+
 (defn remove-from-room! [room user]
   (swap! rooms_ update-in [(keyword room) :users] dissoc (keyword user))
   (swap! users_ update-in [(keyword user) :rooms] #(vec (remove #{room} %))))
@@ -47,6 +52,7 @@
 
 (defn set-username! [user username]
   (swap! users_ assoc-in [(keyword user) :name] username)
+  (swap! usernames_ assoc (keyword username) user)
   (update-username-for-rooms! user username))
 
 (defn get-rooms-with-keys [user]
@@ -92,3 +98,14 @@
 (defn room-owner? [room user]
   (= user (get-in @rooms_ [(keyword room) :owner])))
 
+(defn user-exists? [name]
+  (contains? @usernames_ (keyword name)))
+
+(defn username-free? [name]
+  (not (user-exists? name)))
+
+(defn username-valid? [username]
+  (if (and (re-matches #"^[a-öA-Ö0-9\-]+$" username) (< (count username) 21)) true false))
+
+(defn user-not-member? [room username]
+  (not (some #(= ((keyword username) @usernames_) %) (map :id (get-users-in-room room)))))

@@ -124,7 +124,9 @@
 (defmethod -event-msg-handler
   :update/login
   [{:keys [uid ?data]}]
-  (if (core/login-needed? uid)
+  (if (and (core/login-needed? uid)
+           (core/username-valid? ?data)
+           (core/username-free? ?data))
     (do (core/add-to-room! "public" uid)
         (core/set-username! uid ?data)
         (update-clients-rooms uid)
@@ -139,6 +141,7 @@
 (defn stop-router! []
   (reset! core/rooms_ {})
   (reset! core/users_ {})
+  (reset! core/usernames_ {})
   (when-let [stop-fn @router_] (stop-fn)))
 
 (defn start-router! []

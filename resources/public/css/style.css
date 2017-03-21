@@ -87,7 +87,7 @@ ul.groups {
 .selected {
   margin-bottom: 5px;
   border-radius: 30%;
-  background-color: #5f95a9;
+  background-color: #68ca7f;
   color: white;
   list-style-type: none;
 }
@@ -114,7 +114,7 @@ ul.groups {
 .active {
   background-color: #3a3f40;
   color: white;
-  border-left: 2px solid #7289da;
+  border-left: 2px solid #68ca7f;
 }
 
 .channel:hover {
